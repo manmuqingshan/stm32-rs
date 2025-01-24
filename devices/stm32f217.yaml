@@ -19,20 +19,40 @@ ADC?:
     - fields/adc/adc_v2/adc_v2_extsel_c.yaml
     - collect/adc/jofr_jdr.yaml
 
-# Merge the hundreds of individual bit fields into single fields for the
-# crypt key/iv registers.
+CAN?:
+  _include:
+    - fields/can/can.yaml
+    - collect/can/can.yaml
+    - collect/can/filter_bank.yaml
+
+CRC:
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
+
 CRYP:
-  "K[0123][LR]R":
-    _merge:
-      - b*
-  "IV[01][LR]R":
-    _merge:
-      - IV*
+  _include: patches/cryp/merge_fields.yaml
+
+DMA?:
+  _include:
+    - patches/dma/fcr_wo.yaml
+    - patches/dma/dma_v2.yaml
+    - fields/dma/dma_v2.yaml
+    - collect/dma/st.yaml
 
 EXTI:
   _include:
     - fields/exti/common.yaml
     - collect/exti/farray.yaml
+
+FSMC:
+  _include:
+    - patches/fsmc/fsmc_sramfix_v3.yaml
+    - patches/fsmc/fsmc_nand.yaml
+    - fields/fsmc/fsmc_sram.yaml
+    - fields/fsmc/fsmc_nand.yaml
+    - collect/fsmc/sram.yaml
+    - collect/fsmc/nand_v1.yaml
 
 GPIO?:
   _include:
@@ -63,56 +83,78 @@ RCC:
       UART3RST:
         name: USART3RST
 
+RTC:
+  _derive:
+    TSTR: TR
+    TSDR: DR
+  _include:
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/v2_basic_wakeup.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
+
 SPI?:
   _include:
     - patches/16bit.yaml
     - patches/spi/dr8.yaml
     - fields/spi/spi_v1.yaml
 
-"TIM1[0134]":
-  _include: patches/tim/tim10_14_missing_opm.yaml
-
-"TIM[1]":
-  _include: patches/tim/icpsc.yaml
-
-TIM*:
+TIM1:
   _include:
+    - patches/tim/icpsc.yaml
     - fields/tim/basic.yaml
-
-"TIM[34]":
-  _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
-
-"TIM[25]":
-  _include:
-    - patches/tim/tim2_common_32bit.yaml
-    - fields/tim/tim_32bit.yaml
-
-"TIM[1-58]":
-  _include:
     - fields/tim/tim_gp1.yaml
     - fields/tim/generic.yaml
     - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
     - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - fields/tim/tim_advanced.yaml
+    - collect/tim/ccr.yaml
+    - collect/tim/ccr_advanced.yaml
 
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
+TIM[25]:
+  _include:
+    - patches/tim/tim2_common_32bit.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_32bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
+TIM3:
+  _include:
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_16bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
+TIM6:
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim6.yaml
 
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
+TIM9:
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+TIM10:
+  _include:
+    - patches/tim/tim10_14_missing_opm.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
 UART*:
   _include:
@@ -132,16 +174,7 @@ WWDG:
     - fields/wwdg/wwdg.yaml
 
 _include:
-  - fields/can/can.yaml
-  - collect/can/can.yaml
-  - collect/can/filter_bank.yaml
   - collect/cryp/v1.yaml
-  - patches/fsmc/fsmc_sramfix_v3.yaml
-  - patches/fsmc/fsmc_nand.yaml
-  - fields/fsmc/fsmc_sram.yaml
-  - fields/fsmc/fsmc_nand.yaml
-  - collect/fsmc/sram.yaml
-  - collect/fsmc/nand_v1.yaml
   - patches/ethernet/f2_f4.yaml
   - patches/ethernet/mmc.yaml
   - fields/dac/dac_wavegen.yaml
@@ -153,18 +186,10 @@ _include:
   - fields/rcc/rcc_v2.yaml
   - fields/rcc/rcc_v2_i2s.yaml
   - fields/rcc/rcc_v2_i2s_pll.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
   - patches/adc/adc_common_group_name.yaml
-  - patches/dma/fcr_wo.yaml
-  - patches/dma/dma_v2.yaml
-  - fields/dma/dma_v2.yaml
-  - collect/dma/st.yaml
   - fields/pwr/pwr_v1.yaml
   - patches/tim/group.yaml
   - collect/hash/v1.yaml
-  - patches/rtc/rtc_cr.yaml
-  - collect/rtc/bkpr.yaml
   - patches/usb_otg/fs_remove_prefix.yaml
   - patches/usb_otg/fs_v1.yaml
   - patches/usb_otg/fs_v1_novbussens.yaml

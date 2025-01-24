@@ -36,8 +36,25 @@ ADC4:
 DSI:
   _strip: DSI_
 
+EXTI:
+  _strip: EXTI_
+  _include:
+    - fields/exti/exti_u5.yaml
+
+FMC:
+  _include:
+    - patches/fsmc/fsmc_u5.yaml
+    - fields/fsmc/fsmc_sram.yaml
+    - fields/fsmc/fsmc_nand.yaml
+
 GFXMMU:
   _strip: GFXMMU_
+
+GPDMA?:
+  _strip: GPDMA_
+  _include:
+    - patches/dma/gpdma_u5_tr1.yaml
+    - collect/dma/gpdma/h7rs_u5.yaml
 
 GPIO?:
   _include:
@@ -82,14 +99,27 @@ PWR:
         bitOffset: 21
         bitWidth: 1
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
 SPI?:
   _include: patches/spi/rxtxdr.yaml
 
 TIM?:
   _strip: TIM?_
 
-"TIM[1]":
-  _include: patches/tim/icpsc.yaml
+TIM1:
+  _include:
+    - patches/tim/icpsc.yaml
+
+TIM2: {}
+
+TIM6: {}
+
+TIM15: {}
 
 TIM16:
   CCMR1_Output:
@@ -108,13 +138,8 @@ WWDG:
 
 _include:
   - patches/u5.yaml
-  - patches/fsmc/fsmc_u5.yaml
   - collect/gfxmmu/lut.yaml
   - patches/octospi/u5.yaml
-  - patches/tim/group.yaml
-  - fields/exti/exti_u5.yaml
-  - fields/fsmc/fsmc_nand.yaml
-  - fields/fsmc/fsmc_sram.yaml
   - fields/octospi/u5.yaml
   - fields/pwr/pwr_u5.yaml
   - fields/rcc/rcc_u5.yaml

@@ -42,6 +42,14 @@ ADC?:
 DAC:
   _strip: DAC_
 
+DMA?:
+  _include:
+    - collect/dma/l5.yaml
+
+DMAMUX1:
+  _include:
+    - collect/dma/dmamux.yaml
+
 EXTI:
   _include:
     - patches/exti/exti_rename.yaml
@@ -69,18 +77,39 @@ IWDG:
 RNG:
   _strip: RNG_
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
+SAI?:
+  _include:
+    - patches/sai/sai_v1.yaml
+    - fields/sai/sai.yaml
+    - collect/sai/ch.yaml
+    - collect/sai/pdm.yaml
+
 SPI?:
   _include:
     - patches/16bit.yaml
     - patches/spi/dr8.yaml
 
-"TIM[1],TIM8":
-  _include: patches/tim/icpsc.yaml
+TAMP:
+  _include:
+    - collect/rtc/tamp_bkpr.yaml
 
-TIM4:
-  _delete:
-    _interrupts:
-      - TIM5
+TIM[18]:
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/v2/ocm_bit3.yaml
+    - patches/tim/v2/oc5m_bit3.yaml
+    - fields/tim/v2/ccm_extended.yaml
+
+TIM2:
+  _include:
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/v2/ccm_extended.yaml
 
 TIM5:
   _add:
@@ -89,34 +118,33 @@ TIM5:
         description: TIM5 global interrupt
         value: 48
 
+TIM[34]:
+  _include:
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/v2/ccm_extended.yaml
+
+TIM4:
+  _delete:
+    _interrupts:
+      - TIM5
+
+TIM[67]: {}
+
 TIM15:
   CCMR1_Output:
     _modify:
       OC1M_bit3:
         name: OC1M_3
+  _include:
+    - fields/tim/v2/ccm9_15.yaml
 
 TIM1[67]:
   CCMR1_Output:
     _modify:
       OC1M_2:
         name: OC1M_3
-
-"TIM[18]":
   _include:
-    - patches/tim/v2/ocm_bit3.yaml
-    - patches/tim/v2/oc5m_bit3.yaml
-
-"TIM[234]":
-  _include: patches/tim/v2/ocm_bit3.yaml
-
-"TIM9,TIM12,TIM15":
-  _include: fields/tim/v2/ccm9_15.yaml
-
-"TIM[12-58],TIM19,TIM20":
-  _include: fields/tim/v2/ccm_extended.yaml
-
-"TIM1[013467]":
-  _include: fields/tim/v2/ccm_common.yaml
+    - fields/tim/v2/ccm_common.yaml
 
 UCPD1:
   _include:
@@ -129,19 +157,9 @@ WWDG:
   _include: patches/16bit.yaml
 
 _include:
-  - collect/dma/dmamux.yaml
   - patches/dma/interrupt_names.yaml
-  - collect/dma/l5.yaml
   - collect/flash/secbbr.yaml
   - patches/icache/l5.yaml
   - collect/icache/crr.yaml
   - fields/rcc/rcc_l5.yaml
-  - patches/rtc/alarm.yaml
-  - collect/rtc/tamp_bkpr.yaml
-  - collect/rtc/alarm.yaml
-  - patches/sai/sai_v1.yaml
-  - fields/sai/sai.yaml
-  - collect/sai/ch.yaml
-  - collect/sai/pdm.yaml
-  - patches/tim/group.yaml
   - patches/adc/adc_common_group_name.yaml

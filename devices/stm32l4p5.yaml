@@ -44,11 +44,21 @@ AES:
     - patches/aes/l4+.yaml
     - fields/aes/v2.yaml
 
+CAN?:
+  _include:
+    - fields/can/can.yaml
+    - collect/can/can.yaml
+    - collect/can/filter_bank.yaml
+
 CRC:
   INIT:
     _modify:
       CRC_INIT:
         name: INIT
+  _include:
+    - patches/crc/crc_rename_pol.yaml
+    - fields/crc/crc_advanced.yaml
+    - fields/crc/crc_pol.yaml
 
 DFSDM1:
   _strip: DFSDM_
@@ -56,6 +66,36 @@ DFSDM1:
   _modify:
     FLT1CHGR:
       name: FLT1JCHGR
+
+DMA2D:
+  _include:
+    - patches/dma/dma2d_l4+.yaml
+
+DMA?:
+  _include:
+    - fields/dma/v1.yaml
+    - collect/dma/v1.yaml
+
+DMAMUX:
+  _include:
+    - fields/dma/dmamux_wl.yaml
+    - collect/dma/dmamux.yaml
+
+EXTI:
+  _include:
+    - patches/exti/l4+.yaml
+    - fields/exti/common.yaml
+
+FLASH:
+  ACR:
+    _modify:
+      LATENCY:
+        bitWidth: 4
+
+FMC:
+  _include:
+    - patches/fsmc/fsmc_l4+.yaml
+    - patches/fsmc/fsmc_nand.yaml
 
 GPIO?:
   _include:
@@ -68,12 +108,6 @@ I2C?:
 
 IWDG:
   _include: patches/16bit.yaml
-
-FLASH:
-  ACR:
-    _modify:
-      LATENCY:
-        bitWidth: 4
 
 LPTIM?:
   _add:
@@ -126,11 +160,34 @@ RCC:
       MCOSEL:
         bitWidth: 4
 
+RTC:
+  MISR:
+    _modify:
+      ALRMF:
+        name: ALRAMF
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/v3.yaml
+  #  - collect/rtc/alarm.yaml
+
+SAI?:
+  _include:
+    - patches/sai/sai_l4+.yaml
+    - patches/sai/sai_v1.yaml
+    - fields/sai/sai.yaml
+    - collect/sai/ch.yaml
+
 SPI?:
   _include:
     - patches/16bit.yaml
     - patches/spi/dr8.yaml
     - patches/spi/rename_dff_tifrfe.yaml
+
+SYSCFG:
+  _include:
+    - patches/syscfg/l4+.yaml
+    - fields/syscfg/syscfg_l4+.yaml
 
 TIM?:
   _strip: TIM?_
@@ -173,24 +230,48 @@ TIM??:
       OC6M_1:
         name: OC6M_3
 
-"TIM1[67]":
-  CCMR1_Output:
-    _modify:
-      OC1M_1:
-        name: OC1M_3
-
-TIM*:
+TIM[18]:
   _include:
     - fields/tim/basic.yaml
-
-"TIM[18]":
-  _include:
     - patches/tim/dmab_32.yaml
     - fields/tim/tim_advanced.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v2/ccm_extended.yaml
+    - collect/tim/ccr.yaml
+    - collect/tim/ccr_advanced.yaml
+  CR1:
+    UIFREMAP:
+      Disabled: [0, No remapping. UIF status bit is not copied to TIMx_CNT register bit 31]
+      Enabled: [1, Remapping enabled. UIF status bit is copied to TIMx_CNT register bit 31]
 
-"TIM[34]":
+TIM[25]:
   _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim_32bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v2/ccm_extended.yaml
+    - collect/tim/ccr.yaml
+  CR1:
+    UIFREMAP:
+      Disabled: [0, No remapping. UIF status bit is not copied to TIMx_CNT register bit 31]
+      Enabled: [1, Remapping enabled. UIF status bit is copied to TIMx_CNT register bit 31]
+
+TIM[34]:
+  _include:
+    - fields/tim/basic.yaml
     - fields/tim/tim_16bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v2/ccm_extended.yaml
+    - collect/tim/ccr.yaml
   CNT:
     _modify:
       CNT:
@@ -199,47 +280,38 @@ TIM*:
     _modify:
       ARR:
         bitWidth: 16
-
-"TIM[25]":
-  _include:
-    - fields/tim/tim_32bit.yaml
-
-TIM[1234568]:
   CR1:
     UIFREMAP:
       Disabled: [0, No remapping. UIF status bit is not copied to TIMx_CNT register bit 31]
       Enabled: [1, Remapping enabled. UIF status bit is copied to TIMx_CNT register bit 31]
 
-"TIM[1-58]":
+TIM[67]:
   _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
-    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim6.yaml
+  CR1:
+    UIFREMAP:
+      Disabled: [0, No remapping. UIF status bit is not copied to TIMx_CNT register bit 31]
+      Enabled: [1, Remapping enabled. UIF status bit is copied to TIMx_CNT register bit 31]
 
-"TIM[1-58-9],TIM??":
+TIM15:
   _include:
+    - fields/tim/basic.yaml
     - fields/tim/tim_ckd.yaml
+    - fields/tim/v2/ccm9_15.yaml
+    - collect/tim/ccr.yaml
 
-TIM16:
-  _include: fields/tim/tim16.yaml
-
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM9,TIM12,TIM15":
-  _include: fields/tim/v2/ccm9_15.yaml
-
-"TIM[12-58],TIM19,TIM20":
-  _include: fields/tim/v2/ccm_extended.yaml
-
-"TIM1[013467]":
-  _include: fields/tim/v2/ccm_common.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+TIM1[67]:
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim16.yaml
+    - fields/tim/v2/ccm_common.yaml
+    - collect/tim/ccr.yaml
+  CCMR1_Output:
+    _modify:
+      OC1M_1:
+        name: OC1M_3
 
 USART?:
   _strip: USART_
@@ -268,35 +340,19 @@ _include:
   #- patches/usart/merge_BRR_fields.yaml
   #- patches/usart/rename_CR2_DATAINV_field.yaml
   - fields/tsc/tsc.yaml
-  - patches/fsmc/fsmc_l4+.yaml
-  - patches/fsmc/fsmc_nand.yaml
   - patches/hash/hash_l4+.yaml
-  - patches/crc/crc_rename_pol.yaml
-  - fields/crc/crc_advanced.yaml
-  - fields/crc/crc_pol.yaml
-  - patches/exti/l4+.yaml
-  - fields/exti/exti.yaml
   - patches/firewall/l4+.yaml
   - patches/ltdc/rename.yaml
   - fields/ltdc/ltdc.yaml
   - patches/rng/l4+.yaml
   - fields/rng/rng_wl.yaml
-  - patches/rtc/rtc_cr.yaml
   - patches/octospi/l4+.yaml
-  - fields//octospi/l4.yaml
+  - fields/octospi/l4.yaml
   - patches/octospim/l4+.yaml
   - patches/dbgmcu/l4_apb_fzr_rename.yaml
   - patches/dbgmcu/l4+.yaml
   - fields/dbg/dbg_l4+.yaml
-  - patches/dma/dma2d_l4+.yaml
-  - fields/can/can.yaml
-  - collect/can/can.yaml
-  - collect/can/filter_bank.yaml
   - patches/usb_otg/otg_fs_l4+.yaml
-  - patches/sai/sai_l4+.yaml
-  - patches/sai/sai_v1.yaml
-  - fields/sai/sai.yaml
-  - collect/sai/ch.yaml
   - patches/dfsdm/dfsdm_l4+.yaml
   - fields/dfsdm/dfsdm.yaml
   - collect/dfsdm/v1.yaml
@@ -304,12 +360,6 @@ _include:
   - fields/dac/dac_l4+.yaml
   - patches/comp/l4xx_comp_reg_rename.yaml
   - fields/comp/comp_l4+.yaml
-  - fields/dma/dma_v1.yaml
-  - collect/dma/v1.yaml
-  - fields/dma/dmamux_wl.yaml
-  - collect/dma/dmamux.yaml
-  - patches/syscfg/l4+.yaml
-  - fields/syscfg/syscfg_l4+.yaml
   - patches/flash/l4+.yaml
   - fields/flash/flash_l4+.yaml
   - patches/rcc/l4+.yaml

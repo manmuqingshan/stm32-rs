@@ -22,6 +22,10 @@ ADC:
 CRS:
   _strip: CRS_
 
+DMAMUX:
+  _include:
+    - collect/dma/dmamux.yaml
+
 GPIO?:
   _include:
     - fields/gpio/gpio_l5_u5.yaml
@@ -29,6 +33,12 @@ GPIO?:
 
 I2C?:
   _strip: I2C_
+
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    #- fields/rtc/v3.yaml
+    #- collect/rtc/alarm.yaml
 
 SPI1:
   _include:
@@ -40,27 +50,10 @@ SPI?:
 
 TIM[123]:
   _strip: TIM?_
-  _modify:
-    CCMR1:
-      name: CCMR1_Input
-    CCMR1_ALTERNATE1:
-      name: CCMR1_Output
-    CCMR2:
-      name: CCMR2_Input
-    CCMR2_ALTERNATE1:
-      name: CCMR2_Output
-  CCMR2_Output:
-    _modify:
-      OC3M_1:
-        name: OC3M_3
-      OC4M_1:
-        name: OC4M_3
-  CCMR1_Output:
-    _modify:
-      OC1M_1:
-        name: OC1M_3
-      OC2M_1:
-        name: OC2M_3
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/v2/ocm_bit3.yaml
   SMCR:
     _modify:
       TS:
@@ -72,12 +65,32 @@ TIM[123]:
       SMS_1:
         name: SMS2
 
+TIM1: {}
+
 TIM*:
   _strip:
     - TIM*__
     - TIM?*_
 
-TIM1[467]:
+TIM2:
+  _modify:
+    CNT_ALTERNATE1:
+      name: CNT_remap
+
+TIM3:
+  _modify:
+    CNT_ALTERNATE1:
+      name: CNT_remap
+
+TIM14:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+  CCMR1_Output:
+    _modify:
+      OC1M_1:
+        name: OC1M_3
+
+TIM1[67]:
   _modify:
     CCMR1:
       name: CCMR1_Input
@@ -87,11 +100,6 @@ TIM1[467]:
     _modify:
       OC1M_1:
         name: OC1M_3
-
-TIM[23]:
-  _modify:
-    CNT_ALTERNATE1:
-      name: CNT_remap
 
 USART1:
   _modify:
@@ -106,9 +114,9 @@ USART1:
 
 USB:
   _strip: USB_
+  _include:
+    - collect/usb/chepr.yaml
 
 _include:
   - patches/c0.yaml
   - patches/nvic/2_prio_bits.yaml
-  - collect/dma/dmamux.yaml
-  - collect/usb/chepr.yaml

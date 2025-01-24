@@ -17,6 +17,10 @@ _modify:
   # Rename in accordance with other devices and reference manual.
   Flash:
     name: FLASH
+  SYSCFG_COMP_OPAMP:
+    name: SYSCFG
+    groupName: SYSCFG
+    description: System configuration controller
 
 ADC1_2:
   _delete:
@@ -53,9 +57,22 @@ ADC?:
   SQR?:
     SQ*: [1, 18]
 
+CRC:
+  _include:
+    - fields/crc/crc_advanced.yaml
+    - fields/crc/crc_idr_8bit.yaml
+    - fields/crc/crc_pol.yaml
+
+DMA?:
+  _include:
+    - fields/dma/v1.yaml
+    - collect/dma/v1.yaml
+
 EXTI:
   _include:
     - patches/exti/add_fpu_interrupt.yaml
+    - patches/exti/f3_offset.yaml
+    - fields/exti/common.yaml
   _delete:
     _interrupts:
       - UART4_EXTI34
@@ -109,6 +126,15 @@ RCC:
       TIM17SW:
         bitWidth: 1
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/rtc_common.yaml
+    - fields/rtc/rtc_f3.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
+
 SYSCFG:
   _delete:
     - SYSCFG_RCR
@@ -125,8 +151,25 @@ SYSCFG:
       - SRAM_PARITY_LOCK
       - BYP_ADD_PAR
       - SRAM_PEF
+  _include:
+    - patches/syscfg/f3.yaml
+    - patches/syscfg/f3_cfgr1_i2c3_fmp.yaml
+    - fields/syscfg/syscfg_f3.yaml
+    - fields/syscfg/syscfg_f301.yaml
+    - fields/syscfg/syscfg_f3_cfgr2_pvd_lock.yaml
 
 TIM1:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim_advanced.yaml
+    - fields/tim/v2/ccm_extended.yaml
+    - collect/tim/ccr.yaml
+    - collect/tim/ccr_advanced.yaml
   CCMR3_Output:
     _modify:
       OC5M3:
@@ -134,52 +177,37 @@ TIM1:
       OC6M3:
         name: OC6M_3
 
-"TIM[2-5]":
-  _include: patches/tim/tim_o24ce.yaml
-
-"TIM[1]":
-  _include: patches/tim/icpsc.yaml
-
-TIM*:
+TIM2:
   _include:
+    - patches/tim/tim_o24ce.yaml
+    - patches/tim/tim2_common_32bit.yaml
     - fields/tim/basic.yaml
-
-"TIM[25]":
-  _include: patches/tim/tim2_common_32bit.yaml
-
-"TIM[1-58]":
-  _include:
     - fields/tim/tim_gp1.yaml
     - fields/tim/generic.yaml
     - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
     - fields/tim/tim_ckd.yaml
+    - fields/tim/v2/ccm_extended.yaml
+    - collect/tim/ccr.yaml
+
+TIM6:
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim6.yaml
+
+TIM15:
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v2/ccm9_15.yaml
+    - collect/tim/ccr.yaml
 
 TIM16:
-  _include: fields/tim/tim16.yaml
-
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
-
-"TIM9,TIM12,TIM15":
-  _include: fields/tim/v2/ccm9_15.yaml
-
-"TIM[12-58],TIM19,TIM20":
-  _include: fields/tim/v2/ccm_extended.yaml
-
-"TIM1[013467]":
-  _include: fields/tim/v2/ccm_common.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim16.yaml
+    - fields/tim/v2/ccm_common.yaml
+    - collect/tim/ccr.yaml
 
 USART*:
   _include:
@@ -197,31 +225,13 @@ _include:
   - patches/rcc/f3.yaml
   - patches/rcc/f3_i2c3.yaml
   - patches/rcc/f3_delete_cec.yaml
-  - patches/syscfg/f3.yaml
-  - patches/syscfg/f3_cfgr1_i2c3_fmp.yaml
   - patches/opamp/f3_opamp2.yaml
   - patches/comp/f3_comp246.yaml
   - patches/comp/f3_comp2_inp_dac.yaml
-  - fields/syscfg/syscfg_f3.yaml
-  - fields/syscfg/syscfg_f301.yaml
-  - fields/syscfg/syscfg_f3_cfgr2_pvd_lock.yaml
-  - fields/crc/crc_advanced.yaml
-  - fields/crc/crc_idr_8bit.yaml
-  - fields/crc/crc_pol.yaml
   - patches/tim/group.yaml
   - fields/rcc/rcc_f3.yaml
   - fields/rcc/rcc_f3_i2s.yaml
   - fields/rcc/rcc_pllsrc_1bit.yaml
-  - fields/dma/dma_v1.yaml
-  - collect/dma/v1.yaml
-  - patches/exti/f3_offset.yaml
-  - fields/exti/exti.yaml
-  - patches/rtc/alarm.yaml
-  - patches/rtc/rtc_cr.yaml
-  - fields/rtc/rtc_common.yaml
-  - fields/rtc/rtc_f3.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
   - collect/tsc/iogcr.yaml
   - patches/dbgmcu/f3.yaml
   - fields/comp/comp_f3.yaml

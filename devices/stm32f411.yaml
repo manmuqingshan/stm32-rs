@@ -35,6 +35,15 @@ CRC:
     _modify:
       CR:
         name: RESET
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
+
+DMA?:
+  _include:
+    - patches/dma/dma_v2.yaml
+    - fields/dma/dma_v2.yaml
+    - collect/dma/st.yaml
 
 EXTI:
   _include:
@@ -100,6 +109,14 @@ RCC:
         bitOffset: 13
         bitWidth: 1
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/rtc_common.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
+
 SPI?:
   _include:
     - patches/16bit.yaml
@@ -116,12 +133,18 @@ SYSCFG:
     - patches/syscfg/f4_common.yaml
     - fields/syscfg/f4/syscfg_f401_f411.yaml
 
-TIM3:
-  _delete:
-    _interrupts:
-      - DMA2_Stream7
-
 TIM1:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim_advanced.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
+    - collect/tim/ccr_advanced.yaml
   _delete:
     _interrupts:
       - TIM1_UP_TIM10
@@ -135,45 +158,50 @@ TIM1:
         value: 26
         description: TIM1 Trigger and Commutation interrupts and TIM11 global interrupt
 
-"TIM1[0134]":
-  _include: patches/tim/tim10_14_missing_opm.yaml
-
-TIM*:
+TIM[25]:
   _include:
     - patches/tim/icpsc.yaml
-    - fields/tim/basic.yaml
-
-"TIM[34]":
-  _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
-
-"TIM[25]":
-  _include:
     - patches/tim/tim2_common_32bit.yaml
+    - fields/tim/basic.yaml
     - fields/tim/tim_32bit.yaml
-
-"TIM[1-58]":
-  _include:
     - fields/tim/tim_gp1.yaml
     - fields/tim/generic.yaml
     - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
     - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
+TIM3:
+  _delete:
+    _interrupts:
+      - DMA2_Stream7
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_16bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
+TIM9:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+TIM1[01]:
+  _include:
+    - patches/tim/tim10_14_missing_opm.yaml
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
 USART*:
   _include:
@@ -202,20 +230,10 @@ _include:
   - fields/rcc/rcc_v2_i2s_pll.yaml
   - fields/rcc/rcc_v2_i2s_pllm.yaml
   - fields/rcc/rcc_v2_dckcfgr_timpre.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
   - patches/adc/adc_common_group_name.yaml
-  - patches/dma/dma_v2.yaml
-  - fields/dma/dma_v2.yaml
-  - collect/dma/st.yaml
   - patches/tim/group.yaml
   - fields/flash/flash_v1.yaml
   - fields/flash/flash_latency16.yaml
-  - patches/rtc/alarm.yaml
-  - patches/rtc/rtc_cr.yaml
-  - fields/rtc/rtc_common.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
   - patches/usb_otg/fs_remove_prefix.yaml
   - patches/usb_otg/fs_v1.yaml
   - patches/usb_otg/fs_v1_novbussens.yaml

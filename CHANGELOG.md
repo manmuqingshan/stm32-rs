@@ -2,7 +2,12 @@
 
 ## [Unreleased]
 
+* STM32H5xx: Add H533 (#1129)
+* G4: Fix swapped reset values for SPI4 CR1 and CR2 by deriving SPI4 from SPI1 (#957)
+* STM32H5xx: Update SVD to version 1.7 and add H523 (#1124)
+* TIM3's CCRx is 16-bit for G0Bx and G0C0
 * Format yamls: remove unneeded quotes
+* Apply existing RTC patches for new families, RTC alarm arrays
 * Update L4/L4+ source to v1.4
 * AES enums & patches
 * H5: Array gpio registers
@@ -13,6 +18,7 @@
 * MP15x: Fix DIGBYP bit access in RCC_BDCR
 * Fix yaml parsing errors
 * H7: add bit TRBUFF of DMA_SxCR of H747 cm4
+* H7: add H723/25/30/33/42/50/55/A3/B0
 * Fix inconsistencies for HRTIM_TIMF - stm32g4x4
 * HRTIM H7: delete DLL
 * HRTIM H7 & G4 fixes and enums
@@ -37,7 +43,7 @@
 * rename `devices/common_patches` to just `devices/patches`
 * move field related patches from `peripherals` to `devices/fields`
 * Replace `makehtml.py` with `svdtools html`
-* Updated to `svd2rust` 0.35.0, `svdtools` 0.4.0, `form` 0.12.1, use tools binaries for CI
+* Updated to `svd2rust` 0.35.0, `svdtools` 0.4.1, `form` 0.12.1, use tools binaries for CI
 * Use `svd2rust.toml` config, use custom ident suffixes
 * Normalized docs. Split (for `cargo make`) `form` task on `form` and `fmt`
 * Show avaliable device features if no one selected (#998)
@@ -124,6 +130,7 @@
 * G0: mark interrupt flags in USB ISTR as W0C
 * G0: mark flags in USB CHEPR as W0C/W1T
 * G0: add value enums for EXTICR[2-4]
+* H5, U5: Add cluster definitions for GPDMA channels
 
 Family-specific:
 

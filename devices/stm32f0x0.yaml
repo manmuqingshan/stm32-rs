@@ -16,6 +16,21 @@ ADC:
       TIM3_TRGO: [3, Timer 3 TRGO event]
       TIM15_TRGO: [4, Timer 15 TRGO event]
 
+CRC:
+  _include:
+    - patches/crc/f0_init_addr_fix.yaml
+    - fields/crc/crc_advanced.yaml
+    - fields/crc/crc_idr_8bit.yaml
+
+DMA?:
+  _include:
+    - fields/dma/v1.yaml
+    - collect/dma/v1.yaml
+
+EXTI:
+  _include:
+    - fields/exti/common.yaml
+
 GPIO?:
   _include:
     - fields/gpio/v2/common.yaml
@@ -45,6 +60,15 @@ RCC:
         bitOffset: 16
         bitWidth: 1
 
+RTC:
+  _derive:
+    TSTR: TR
+    TSDR: DR
+  _include:
+    - fields/rtc/v2_basic.yaml
+    #- collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
+
 SPI1:
   SR:
     _delete:
@@ -70,48 +94,60 @@ SYSCFG:
       PD: [3, Select PDx as the source input for the EXTIx external interrupt]
       PF: [5, Select PFx as the source input for the EXTIx external interrupt]
 
-TIM1[456]:
-  _include: fields/tim/tim_16bit.yaml
-
-"TIM[1]":
-  _include: patches/tim/icpsc.yaml
-
-TIM*:
+TIM1:
   _include:
+    - patches/tim/icpsc.yaml
     - fields/tim/basic.yaml
-
-"TIM[34]":
-  _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
-
-"TIM[1-58]":
-  _include:
     - fields/tim/tim_gp1.yaml
     - fields/tim/generic.yaml
     - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
     - fields/tim/tim_ckd.yaml
+    - fields/tim/tim_advanced.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
+    - collect/tim/ccr_advanced.yaml
+
+TIM3:
+  _include:
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_16bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
+
+TIM6:
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim6.yaml
+
+TIM14:
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim_16bit.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
+
+TIM15:
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim_16bit.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
 TIM16:
-  _include: fields/tim/tim16.yaml
-
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
-
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+  _include:
+    - fields/tim/basic.yaml
+    - fields/tim/tim_16bit.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim16.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
 USART*:
   _include:
@@ -119,6 +155,10 @@ USART*:
     - patches/usart/merge_CR2_ADDx_fields.yaml
     - patches/usart/merge_BRR_fields.yaml
     - fields/usart/usart_v2B.yaml
+
+USB:
+  _include:
+    - fields/usb/usb_with_LPM.yaml
 
 WWDG:
   _include:
@@ -131,20 +171,12 @@ _include:
   - patches/rcc/f0_v18pwrrstf.yaml
   - patches/rcc/f0_usart3.yaml
   - patches/rcc/f0_usart6.yaml
-  - patches/dma/f0_dmaen.yaml
+  - patches/rcc/f0_dmaen.yaml
   - patches/rcc/f0_usben.yaml
   - patches/rcc/f0_hsi48cal.yaml
   - patches/tim/group.yaml
-  - fields/crc/crc_advanced.yaml
-  - fields/crc/crc_idr_8bit.yaml
   - fields/pwr/pwr_v1.yaml
-  - fields/exti/exti.yaml
   - fields/rcc/rcc_f0x0.yaml
-  - fields/dma/dma_v1.yaml
-  - collect/dma/v1.yaml
-  - collect/rtc/bkpr.yaml
-  - fields/usb/usb_with_LPM.yaml
   - patches/flash/f0_ram_parity_check.yaml
   - fields/flash/flash_f0.yaml
   - patches/nvic/2_prio_bits.yaml
-  - patches/crc/f0_init_addr_fix.yaml

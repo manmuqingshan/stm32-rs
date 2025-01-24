@@ -9,8 +9,6 @@ ADC12_Common:
   _strip: ADC12_
   _include:
     - fields/adc/adc_u5_common.yaml
-  CCR:
-    _delete: [DAMDF, DELAY, DUAL]
 
 ADC[124]:
   _strip: ADC_
@@ -45,6 +43,27 @@ AES:
         name: SUSP
   _include:
     - fields/aes/v3.yaml
+
+DMA2D:
+  _include:
+    - fields/dma/dma2d_v2.yaml
+    - fields/dma/dma2d_v2.yaml
+
+EXTI:
+  _strip: EXTI_
+  _include:
+    - fields/exti/exti_u5.yaml
+
+FMC:
+  _include:
+    - patches/fsmc/fsmc_u5.yaml
+    - fields/fsmc/fsmc_sram.yaml
+    - fields/fsmc/fsmc_nand.yaml
+
+GPDMA?:
+  _strip: GPDMA_
+  _include:
+    - collect/dma/gpdma/h7rs_u5.yaml
 
 GPIO?:
   _include:
@@ -123,11 +142,25 @@ PWR:
           bitOffset: 14
           bitWidth: 1
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
 SPI?:
   _include: patches/spi/rxtxdr.yaml
 
 TIM?:
   _strip: TIM?_
+
+TIM1: {}
+
+TIM2: {}
+
+TIM6: {}
+
+TIM15: {}
 
 TIM16:
   CCMR1_Output:
@@ -146,13 +179,7 @@ WWDG:
 
 _include:
   - patches/u5.yaml
-  - patches/fsmc/fsmc_u5.yaml
   - patches/octospi/u5.yaml
-  - fields/dma/dma2d_v2.yaml
-  - fields/exti/exti_u5.yaml
-  - fields/fsmc/fsmc_nand.yaml
-  - fields/fsmc/fsmc_sram.yaml
   - fields/octospi/u5.yaml
-  - patches/tim/group.yaml
   - fields/pwr/pwr_u5.yaml
   - fields/rcc/rcc_u5.yaml

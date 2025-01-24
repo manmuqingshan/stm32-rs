@@ -1,6 +1,6 @@
 _svd: ../svd/stm32h563.svd
 
-ADC?:
+ADC[12]:
   _strip: ADC_
   _include:
     - patches/adc/split.yaml
@@ -11,6 +11,30 @@ ADC?:
     _merge: EXTSEL*
   SQR?:
     SQ*: [0, 19]
+
+ADCC:
+  _strip: ADC_
+
+CRC:
+  _include:
+    - patches/crc/crc_rename_init.yaml
+    - fields/crc/crc_advanced.yaml
+    # - fields/crc/crc_idr_32bit.yaml
+    - fields/crc/crc_pol.yaml
+
+ETH:
+  _strip: ETH_
+
+EXTI:
+  _include:
+    - fields/exti/common.yaml
+    - fields/exti/exti_priv.yaml
+
+GPDMA?:
+  _strip: GPDMA_
+  _include:
+    - fields/dma/gpdma/h5.yaml
+    - collect/dma/gpdma/h5.yaml
 
 GPIOC:
   _strip: GPIO_
@@ -34,8 +58,19 @@ I2C?:
 
 IWDG:
   _include:
+    - patches/iwdg/add_onf.yaml
     - patches/16bit_with_mask.yaml
     - fields/iwdg/h5.yaml
+
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
+SAI?:
+  _include:
+    - fields/sai/sai.yaml
 
 SPI?:
   _include:
@@ -51,66 +86,94 @@ TIM1?:
     - TIM2_
     - TIM1?_
 
-#"TIM[1346-9],TIM??":
-#  _include: patches/tim/add_dither16.yaml
-
-"TIM[25]":
-  _include:
-    #  - patches/tim/add_dither32.yaml
-    - patches/tim/tim_uifremap.yaml
-    - fields/tim/tim_32bit.yaml
-
-"TIM[18]":
+TIM[18]:
   _include:
     - patches/tim/tim1_mms_ts_sms.yaml
     - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_common_ext.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_uifremap.yaml
+    - fields/tim/dithen.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim1_advanced.yaml
+    - fields/tim/tim_16bit_dither.yaml
+    - fields/tim/v2/ccm_extended.yaml
 
-"TIM[2-5]":
+TIM[25]:
+  _include:
+    - patches/tim/tim_uifremap.yaml
+    - fields/tim/tim_32bit.yaml
+    - patches/tim/tim2_mms_ts_sms.yaml
+    - patches/tim/v2/oc1m.yaml
+    - patches/tim/v2/oc2m.yaml
+    - patches/tim/v2/oc3m.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_common_ext.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_uifremap.yaml
+    - fields/tim/dithen.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v2/ccm_extended.yaml
+
+TIM[34]:
   _include:
     - patches/tim/tim2_mms_ts_sms.yaml
     - patches/tim/v2/oc1m.yaml
     - patches/tim/v2/oc2m.yaml
     - patches/tim/v2/oc3m.yaml
-
-TIM1[37]:
-  _include:
-    - patches/tim/v2/oc1m.yaml
-
-TIM1[25]:
-  _include:
-    - patches/tim/v2/oc1m.yaml
-    - patches/tim/v2/oc2m.yaml
-
-"TIM[1-58]":
-  _include:
     - fields/tim/tim_gp1.yaml
     - fields/tim/generic.yaml
     - fields/tim/tim_common_ext.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_uifremap.yaml
+    - fields/tim/dithen.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim_16bit_dither.yaml
+    - fields/tim/v2/ccm_extended.yaml
 
-TIM*:
+TIM[67]:
   _include:
     - fields/tim/basic.yaml
     - fields/tim/tim_uifremap.yaml
     - fields/tim/dithen.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
-    - fields/tim/tim_ckd.yaml
-
-TIM1:
-  _include: fields/tim/tim1_advanced.yaml
-
-"TIM[67]":
-  _include:
     - fields/tim/tim6_dither.yaml
 
-"TIM[1348]":
+TIM12:
   _include:
-    - fields/tim/tim_16bit_dither.yaml
+    - patches/tim/v2/oc1m.yaml
+    - patches/tim/v2/oc2m.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_uifremap.yaml
+    - fields/tim/dithen.yaml
+    - fields/tim/tim_ckd.yaml
 
-"TIM[18],TIM[2-5]":
+TIM1[34]:
   _include:
-    - fields/tim/v2/ccm_extended.yaml
+    - patches/tim/v2/oc1m.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_uifremap.yaml
+    - fields/tim/dithen.yaml
+    - fields/tim/tim_ckd.yaml
+
+TIM15:
+  _include:
+    - patches/tim/v2/oc1m.yaml
+    - patches/tim/v2/oc2m.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_uifremap.yaml
+    - fields/tim/dithen.yaml
+    - fields/tim/tim_ckd.yaml
+
+TIM1[67]:
+  _include:
+    - patches/tim/v2/oc1m.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_uifremap.yaml
+    - fields/tim/dithen.yaml
+    - fields/tim/tim_ckd.yaml
 
 UCPD1:
   _strip: UCPD_
@@ -129,6 +192,10 @@ USART?:
     - fields/usart/smartcard.yaml
     - fields/usart/prescalar.yaml
 
+USB:
+  _include:
+    - collect/usb/chepr.yaml
+
 WWDG:
   _include:
     - patches/16bit_with_mask.yaml
@@ -137,27 +204,11 @@ WWDG:
 _include:
   - patches/h5.yaml
   - patches/h56x_h57x.yaml
-  - patches/ethernet/h5.yaml
-
-  - patches/crc/crc_rename_init.yaml
-  - fields/crc/crc_advanced.yaml
-  # - fields/crc/crc_idr_32bit.yaml
-  - fields/crc/crc_pol.yaml
 
   # - collect/flash/secbbr.yaml
 
   - patches/rcc/h56x_h57x.yaml
   - fields/rcc/rcc_h56x_h57x.yaml
 
-  - patches/rtc/alarm.yaml
-  # - fields/rtc/rtc_common.yaml
-  - collect/rtc/alarm.yaml
-  # - collect/rtc/bkpr.yaml
-
-  - fields/sai/sai.yaml
   - fields/crs/crs.yaml
   - fields/pwr/pwr_h5.yaml
-  - fields/exti/exti.yaml
-  - fields/exti/exti_priv.yaml
-  - fields/gpdma/gpdma.yaml
-  - collect/usb/chepr.yaml

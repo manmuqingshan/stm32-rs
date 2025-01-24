@@ -7,6 +7,14 @@ ADC?:
   CFGR:
     _merge: EXTSEL*
 
+DMA2D:
+  _include:
+    - collect/dma/dma2d_clut.yaml
+
+GPDMA:
+  _include:
+    - collect/dma/gpdma/h7rs_u5.yaml
+
 GPIO?:
   _strip: GPIO?_
   _include:
@@ -17,8 +25,28 @@ GPIO?:
 IWDG:
   _include: patches/16bit_with_mask.yaml
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
 SPI?:
   _include: patches/spi/rxtxdr.yaml
+
+TIM1: {}
+
+TIM2: {}
+
+TIM6: {}
+
+TIM9: {}
+
+TIM13: {}
+
+TIM15: {}
+
+TIM16: {}
 
 UCPD:
   _include:
@@ -33,8 +61,6 @@ _include:
   - collect/jpeg/ram_h7rs.yaml
   - collect/hash/v3.yaml
   - collect/gfxmmu/lut.yaml
-  - collect/dma/dma2d_clut.yaml
   - collect/tamp/bkp.yaml
-  - collect/dma/h7rs_gpdma.yaml
   - collect/sdmmc/fifo.yaml
   - fields/rcc/rcc_h7rs.yaml

@@ -21,12 +21,21 @@ CRC:
     _modify:
       Independent_data_register:
         name: IDR
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
 
 EXTI:
   _include:
     - patches/exti/split.yaml
     - fields/exti/common.yaml
     - collect/exti/farray.yaml
+
+FSMC:
+  _include:
+    - patches/fsmc/fsmc_sramfix_common.yaml
+    - fields/fsmc/fsmc_sram.yaml
+    - collect/fsmc/sram.yaml
 
 GPIO?:
   _include:
@@ -52,49 +61,61 @@ LCD:
   _include:
     - patches/lcd/ram_segment_40.yaml
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/rtc_common.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
+
 SPI?:
   _include:
     - patches/16bit.yaml
     - patches/spi/dr8.yaml
 
-"TIM[23]":
-  _include: patches/tim/rename_TIM2_CCR3_CCR3.yaml
+TIM2:
+  _include:
+    - patches/tim/rename_TIM2_CCR3_CCR3.yaml
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim_16bit.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM1[0134]":
-  _include: patches/tim/tim10_14_missing_opm.yaml
+TIM6:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim6.yaml
 
 TIM9:
   _include:
     - patches/tim/omp.yaml
     - patches/tim/l1_tim9_ccer.yaml
-
-TIM*:
-  _include:
     - patches/tim/icpsc.yaml
     - fields/tim/basic.yaml
-
-"TIM[1-58]":
-  _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
-    - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
     - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM[2345]":
+TIM10:
   _include:
-    - fields/tim/tim_16bit.yaml
+    - patches/tim/tim10_14_missing_opm.yaml
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
+USB:
+  _strip: USB_
+  _include:
+    - fields/usb/usb.yaml
 
 WWDG:
   _include:
@@ -102,19 +123,8 @@ WWDG:
     - fields/wwdg/wwdg.yaml
 
 _include:
-  - patches/fsmc/fsmc_sramfix_common.yaml
-  - fields/fsmc/fsmc_sram.yaml
-  - collect/fsmc/sram.yaml
-  - patches/usb/unprefix_registers.yaml
   - fields/dac/dac_wavegen.yaml
   - fields/dac/dac_common_2ch.yaml
   - fields/dac/dac_dmaudr.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
   - fields/pwr/pwr_v1.yaml
   - patches/tim/group.yaml
-  - patches/rtc/alarm.yaml
-  - patches/rtc/rtc_cr.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
-  - fields/usb/usb.yaml

@@ -48,18 +48,46 @@ ADC?:
     - fields/adc/adc_v2/adc_v2_extsel_c.yaml
     - collect/adc/jofr_jdr.yaml
 
+CAN?:
+  _include:
+    - fields/can/can.yaml
+    - collect/can/can.yaml
+    - collect/can/filter_bank.yaml
+
 CRC:
   # The SVD calls the RESET field "CR", fix per RM0390
   CR:
     _modify:
       CR:
         name: RESET
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
+
+DMA?:
+  _include:
+    - patches/dma/fcr_wo.yaml
+    - patches/dma/dma_v2.yaml
+    - fields/dma/dma_v2.yaml
+    - collect/dma/st.yaml
 
 FLASH:
   ACR:
     _modify:
       LATENCY:
         bitWidth: 4
+
+FMC:
+  _include:
+    - patches/fsmc/fsmc_sramfix.yaml
+    - patches/fsmc/fsmc_nand.yaml
+    - fields/fsmc/fsmc_sram.yaml
+    - fields/fsmc/fsmc_wfdis.yaml
+    - fields/fsmc/fsmc_nand.yaml
+    - fields/fsmc/fsmc_sd.yaml
+    - collect/fsmc/sram.yaml
+    - collect/fsmc/nand_v1.yaml
+    - collect/fsmc/sd.yaml
 
 FMPI2C1:
   _modify:
@@ -182,6 +210,21 @@ RCC:
         bitOffset: 28
         bitWidth: 3
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/f4_cr.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/rtc_common.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
+
+SAI?:
+  _include:
+    - patches/sai/sai_v1.yaml
+    - fields/sai/sai.yaml
+    - collect/sai/ch.yaml
+
 SYSCFG:
   _include:
     - patches/syscfg/f4_common.yaml
@@ -222,45 +265,66 @@ SPI?:
       TIFRFE:
         name: FRE
 
-TIM*:
+TIM1:
   _include:
     - patches/tim/icpsc.yaml
     - fields/tim/basic.yaml
-
-"TIM[34]":
-  _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
-
-"TIM[25]":
-  _include:
-    - patches/tim/tim2_common_32bit.yaml
-    - fields/tim/tim_32bit.yaml
-
-"TIM[1-58]":
-  _include:
     - fields/tim/tim_gp1.yaml
     - fields/tim/generic.yaml
     - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
     - fields/tim/tim_ckd.yaml
+    - fields/tim/tim_advanced.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
+    - collect/tim/ccr_advanced.yaml
 
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
+TIM[25]:
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim2_common_32bit.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_32bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
+TIM3:
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_16bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
+TIM6:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim6.yaml
 
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
+TIM9:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+TIM1[01]:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
 UART*:
   _include:
@@ -283,12 +347,6 @@ WWDG:
 # NOTE: Core peripherals (NVIC, MPU, FPU, SCB, etc.) were deleted
 
 _include:
-  - fields/can/can.yaml
-  - collect/can/can.yaml
-  - collect/can/filter_bank.yaml
-  - patches/sai/sai_v1.yaml
-  - fields/sai/sai.yaml
-  - collect/sai/ch.yaml
   - fields/dac/dac_wavegen.yaml
   - fields/dac/dac_f4_2ch.yaml
   - fields/dac/dac_dmaudr.yaml
@@ -310,20 +368,8 @@ _include:
   - fields/rcc/rcc_v2_dckcfgr2_i2csel.yaml
   - fields/rcc/rcc_v2_dckcfgr2_spdifrxsel.yaml
   - fields/rcc/rcc_v2_ckgatenr.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
   - patches/adc/adc_common_group_name.yaml
-  - patches/dma/fcr_wo.yaml
-  - patches/dma/dma_v2.yaml
-  - fields/dma/dma_v2.yaml
-  - collect/dma/st.yaml
   - patches/tim/group.yaml
-  - patches/rtc/alarm.yaml
-  - patches/rtc/f4_cr.yaml
-  - patches/rtc/rtc_cr.yaml
-  - fields/rtc/rtc_common.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
   - patches/usb_otg/fs_remove_prefix.yaml
   - patches/usb_otg/fs_host_addr.yaml
   - patches/usb_otg/fs_v2.yaml
@@ -333,15 +379,6 @@ _include:
   - collect/usb_otg/hs.yaml
   - patches/usb_otg/hs_fixes_446_469.yaml
   - patches/dbgmcu/dbgmcu.yaml
-  - patches/fsmc/fsmc_sramfix.yaml
-  - patches/fsmc/fsmc_nand.yaml
-  - fields/fsmc/fsmc_sram.yaml
-  - fields/fsmc/fsmc_wfdis.yaml
-  - fields/fsmc/fsmc_nand.yaml
-  - fields/fsmc/fsmc_sd.yaml
-  - collect/fsmc/sram.yaml
-  - collect/fsmc/nand_v1.yaml
-  - collect/fsmc/sd.yaml
   - fields/sdio/sdio_f4_common.yaml
   - collect/sdio/resp.yaml
   - fields/flash/flash_v1.yaml

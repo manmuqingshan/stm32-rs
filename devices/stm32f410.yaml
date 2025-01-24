@@ -40,6 +40,9 @@ CRC:
     _modify:
       CR:
         name: RESET
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
 
 DAC:
   CR:
@@ -52,6 +55,12 @@ DAC:
       - TEN2
       - BOFF2
       - EN2
+
+DMA?:
+  _include:
+    - patches/dma/dma_v2.yaml
+    - fields/dma/dma_v2.yaml
+    - collect/dma/st.yaml
 
 EXTI:
   _include:
@@ -155,6 +164,14 @@ RNG:
         bitOffset: 5
         bitWidth: 1
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/rtc_common.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
+
 SPI?:
   _include:
     - patches/16bit.yaml
@@ -197,47 +214,58 @@ SYSCFG:
       FMPI2C1_SCL:
         name: FMPI2C4_SCL
 
+TIM1:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim_advanced.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
+    - collect/tim/ccr_advanced.yaml
+
 TIM5:
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_16bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/generic.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
   _add:
     _interrupts:
       TIM5:
         description: TIM5 global interrupt
         value: 50
 
-TIM*:
+TIM6:
   _include:
     - patches/tim/icpsc.yaml
     - fields/tim/basic.yaml
+    - fields/tim/tim6.yaml
 
-"TIM[2345]":
+TIM9:
   _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
-
-"TIM[1-58]":
-  _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
-    - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
     - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
-
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+TIM11:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
 USART*:
   _include:
@@ -273,20 +301,10 @@ _include:
   - fields/rcc/rcc_v2_dckcfgr_i2ssrc.yaml
   - fields/rcc/rcc_v2_dckcfgr2_lptimsel.yaml
   - fields/rcc/rcc_v2_dckcfgr2_i2csel.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
   - patches/adc/adc_common_group_name.yaml
-  - patches/dma/dma_v2.yaml
-  - fields/dma/dma_v2.yaml
-  - collect/dma/st.yaml
   - patches/tim/group.yaml
   - fields/flash/flash_v1.yaml
   - fields/flash/flash_latency16.yaml
-  - patches/rtc/alarm.yaml
-  - patches/rtc/rtc_cr.yaml
-  - fields/rtc/rtc_common.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
   - patches/dbgmcu/dbgmcu.yaml
   - patches/pwr/f4.yaml
   - fields/pwr/pwr_f410_f412_f413_f423.yaml

@@ -34,6 +34,17 @@ ADC4:
       name: CHSELR1
       alternateRegister: CHSELR0
 
+EXTI:
+  _strip: EXTI_
+  _include:
+    - fields/exti/exti_u5.yaml
+
+GPDMA?:
+  _strip: GPDMA_
+  _include:
+    - patches/dma/gpdma_u5_tr1.yaml
+    - collect/dma/gpdma/h7rs_u5.yaml
+
 GPIO?:
   _include:
     - fields/gpio/gpio_l5_u5.yaml
@@ -70,6 +81,12 @@ PWR:
   CR4:
     _delete: SRAM5PDS*
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
 SDMMC:
   _strip: SDMMC_
 
@@ -79,8 +96,15 @@ SPI?:
 TIM?:
   _strip: TIM?_
 
-"TIM[1]":
-  _include: patches/tim/icpsc.yaml
+TIM1:
+  _include:
+    - patches/tim/icpsc.yaml
+
+TIM2: {}
+
+TIM6: {}
+
+TIM15: {}
 
 TIM16:
   CCMR1_Output:
@@ -94,8 +118,6 @@ WWDG:
 _include:
   - patches/u5.yaml
   - patches/octospi/u535_u545.yaml
-  - patches/tim/group.yaml
-  - fields/exti/exti_u5.yaml
   - fields/octospi/u5.yaml
   - fields/pwr/pwr_u5.yaml
   - fields/rcc/rcc_u5.yaml

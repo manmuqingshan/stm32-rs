@@ -30,14 +30,8 @@ GPIO?:
 LPGPIO?:
   _strip: LPGPIO_
 
-GPDMA?:
-  _strip: GPDMA_
-
 LPDMA?:
   _strip: LPDMA_
-
-EXTI:
-  _strip: EXTI_
 
 DLYBOS,DLYBOS?:
   _strip: DLYB_
@@ -50,6 +44,3 @@ VREFBUF:
 
 ADF?:
   _strip: ADF_
-
-FDCAN?:
-  _strip: FDCAN?_
