@@ -25,22 +25,24 @@ _modify:
   ETHERNET_PTP:
     name: Ethernet_PTP
 
-ADC?:
-  _include:
-    - fields/adc/adc_f1_f37x.yaml
-    - collect/adc/jofr_jdr.yaml
-    - collect/adc/jofr_jdr.yaml
-
-"ADC[12]":
-  _include:
-    - fields/adc/adc_f1_common.yaml
-
 ADC1:
   _include:
+    - fields/adc/adc_f1_f37x.yaml
+    - fields/adc/adc_f1_common.yaml
     - fields/adc/adc1_f1.yaml
+    - collect/adc/jofr_jdr.yaml
+
+ADC2:
+  _include:
+    - fields/adc/adc_f1_f37x.yaml
+    - fields/adc/adc_f1_common.yaml
+    - collect/adc/jofr_jdr.yaml
+
 ADC3:
   _include:
+    - fields/adc/adc_f1_f37x.yaml
     - fields/adc/adc3_f1.yaml
+    - collect/adc/jofr_jdr.yaml
 
 AFIO:
   MAPR:
@@ -51,6 +53,28 @@ AFIO:
     - fields/exti/derive.yaml
     - fields/exti/abcdefg.yaml
 
+BKP:
+  _include:
+    - fields/bkp/bkp.yaml
+    - collect/bkp/dr.yaml
+
+CAN:
+  _strip: CAN_
+  _include:
+    - fields/can/can.yaml
+    - collect/can/can.yaml
+    - collect/can/filter_bank.yaml
+
+CRC:
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
+
+DAC:
+  _include:
+    - fields/dac/dac_common_2ch.yaml
+    - fields/dac/dac_wavegen.yaml
+
 DBGMCU:
   CR:
     _modify:
@@ -59,15 +83,31 @@ DBGMCU:
         description: DBG_CAN_STOP
     _delete: DBG_CAN2_STOP
 
+DMA?:
+  _include:
+    - fields/dma/v1.yaml
+    - collect/dma/v1.yaml
+
 EXTI:
   _include:
     - fields/exti/common.yaml
     - collect/exti/farray.yaml
 
-GPIO?:
+FLASH:
+  _include:
+    - fields/flash/flash_f1.yaml
+
+FSMC:
+  _include:
+    - patches/fsmc/fsmc_sramfix_v3.yaml
+    - fields/fsmc/fsmc_sram.yaml
+    - collect/fsmc/sram.yaml
+
+GPIOA:
   _include:
     - fields/gpio/v1/common.yaml
     - collect/gpio/f1.yaml
+    - collect/gpio/f1_derive.yaml
 
 I2C?:
   _include:
@@ -85,6 +125,10 @@ IWDG:
 MPU:
   _strip: MPU_
 
+PWR:
+  _include:
+    - fields/pwr/pwr_v1.yaml
+
 RCC:
   CFGR:
     _modify:
@@ -92,12 +136,21 @@ RCC:
       OTGFSPRE:
         name: USBPRE
         description: USB prescaler
+  _include:
+    - fields/rcc/rcc_f1.yaml
+    - fields/rcc/rcc_f1_f3_usb.yaml
+
+RTC:
+  _include:
+    - fields/rtc/rtc_f1.yaml
 
 SDIO:
   _modify:
     RESPI1:
       name: RESP1
       displayName: RESP1
+  _include:
+    - collect/sdio/resp.yaml
 
 SPI?:
   _include:
@@ -105,55 +158,40 @@ SPI?:
     - patches/spi/dr8.yaml
     - fields/spi/spi_v1_without_FRF_FRE.yaml
 
+TIM1:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim1.yaml
+    - collect/tim/ccr.yaml
+
+TIM2:
+  _include:
+    - patches/tim/tim_o24ce.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim3.yaml
+    - collect/tim/ccr.yaml
+
+TIM6:
+  _include:
+    - fields/tim/v1/tim6.yaml
+
+TIM9:
+  _include:
+    - fields/tim/v1/tim9.yaml
+    - collect/tim/ccr.yaml
+
 TIM10:
+  _include:
+    - patches/tim/tim10_14_missing_opm.yaml
+    - fields/tim/v1/tim10.yaml
+    - collect/tim/ccr.yaml
   CCMR1_Output:
     _add:
       OC1FE:
         description: Output compare 1 fast enable
-        bitOffset: 3
+        bitOffset: 2
         bitWidth: 1
-
-"TIM[2-5]":
-  _include: patches/tim/tim_o24ce.yaml
-
-"TIM1[0134]":
-  _include: patches/tim/tim10_14_missing_opm.yaml
-
-"TIM[1]":
-  _include: patches/tim/icpsc.yaml
-
-TIM*:
-  _include:
-    - fields/tim/basic.yaml
-
-"TIM[1-58]":
-  _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
-    - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
-    - fields/tim/tim_ckd.yaml
-
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM[2345]":
-  _include:
-    - fields/tim/tim_16bit.yaml
-
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
-
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
 
 UART*:
   _include:
@@ -164,6 +202,11 @@ USART*:
   _include:
     - fields/usart/uart_common.yaml
     - fields/usart/uart_usart.yaml
+
+USB:
+  _include:
+    - fields/usb/usb.yaml
+    - collect/usb/epxr.yaml
 
 WWDG:
   _include:
@@ -177,31 +220,8 @@ WWDG:
 
 _include:
   - patches/bkp/bkp.yaml
-  - fields/bkp/bkp.yaml
-  - collect/bkp/dr.yaml
-  - patches/can/can_remove_prefix.yaml
-  - fields/can/can.yaml
-  - collect/can/can.yaml
-  - collect/can/filter_bank.yaml
-  - patches/fsmc/fsmc_sramfix_v3.yaml
-  - fields/fsmc/fsmc_sram.yaml
-  - collect/fsmc/sram.yaml
-  - fields/dac/dac_wavegen.yaml
-  - fields/dac/dac_common_2ch.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
-  - fields/pwr/pwr_v1.yaml
   - patches/tim/group.yaml
-  - fields/rcc/rcc_f1.yaml
-  - fields/rcc/rcc_f1_f3_usb.yaml
-  - fields/rtc/rtc_f1.yaml
-  - fields/dma/dma_v1.yaml
-  - collect/dma/v1.yaml
-  - collect/sdio/resp.yaml
-  - fields/usb/usb.yaml
-  - collect/usb/epxr.yaml
   - patches/usb_otg/fs_remove_prefix.yaml
   - patches/usb_otg/fs_v1.yaml
   - collect/usb_otg/fs.yaml
   - patches/dbgmcu/rename.yaml
-  - fields/flash/flash_f1.yaml

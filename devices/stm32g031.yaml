@@ -33,6 +33,22 @@ ADC:
     - fields/adc/c0_g0_wl.yaml
     - collect/adc/c0_g0_wl.yaml
 
+DMA*:
+  _strip: DMA_
+
+DMA1:
+  _include:
+    - patches/dma/g0_5ch.yaml
+
+DMA?:
+  _include:
+    - fields/dma/v1.yaml
+    - collect/dma/v1.yaml
+
+DMAMUX:
+  _include:
+    - collect/dma/dmamux.yaml
+
 EXTI:
   _include:
     - patches/exti/exti_rename.yaml
@@ -43,10 +59,19 @@ EXTI:
       # but for this part they forgot to remove it from EXTI
       - PVD
 
+FLASH:
+  _include:
+    - patches/flash/g0.yaml
+
 GPIO?:
   _include:
     - fields/gpio/gpio_g0_l0.yaml
     - collect/gpio/v2.yaml
+
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[B]:
+  _include: collect/gpio/v2_derive.yaml
 
 I2C?:
   _include:
@@ -71,6 +96,12 @@ RCC:
     - fields/rcc/rcc_g0.yaml
     - fields/rcc/rcc_g0x1.yaml
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
 SPI?:
   _strip: SPI_
   _include:
@@ -82,53 +113,43 @@ SPI?:
 SYSCFG:
   _include: fields/syscfg/syscfg_g0_usart2.yaml
 
+TAMP:
+  _include:
+    - collect/rtc/tamp_bkpr.yaml
+
 TIM1:
   _include:
     - patches/tim/v2/g0_tim1_ccmr_input.yaml
     - patches/tim/v2/oc5m_bit3.yaml
+    - fields/tim/v2/tim1.yaml
+    - collect/tim/ccr.yaml
 
 TIM2:
-  _include: patches/tim/tim2_common_32bit.yaml
+  _include:
+    - patches/tim/tim2_common_32bit.yaml
+    - fields/tim/v2/tim2.yaml
+    - collect/tim/ccr.yaml
 
 TIM3:
-  _include: patches/tim/tim_ch_16bit_l.yaml
+  _include:
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/v2/tim3.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1],TIM14":
-  _include: patches/tim/icpsc.yaml
+TIM14:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/v2/tim13.yaml
+    - collect/tim/ccr.yaml
 
 TIM16:
+  _include:
+    - fields/tim/v2/tim16.yaml
+    - collect/tim/ccr.yaml
   CCMR1_Output:
     _modify:
       OC1M_2:
         name: OC1M_3
-
-TIM*:
-  _include:
-    - fields/tim/basic.yaml
-
-"TIM[1-58]":
-  _include:
-    - fields/tim/tim_gp1.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
-    - fields/tim/tim_ckd.yaml
-
-"TIM[18]":
-  _include:
-    - fields/tim/tim_advanced.yaml
-
-"TIM[12-58],TIM19,TIM20":
-  _include: fields/tim/v2/ccm_extended.yaml
-
-"TIM1[013467]":
-  _include: fields/tim/v2/ccm_common.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
 
 USART?:
   _include:
@@ -148,11 +169,4 @@ _include:
   - patches/g0_strip.yaml
   - patches/nvic/2_prio_bits.yaml
   - patches/dma/g0_dma1_5ch_only.yaml
-  - fields/dma/dma_v1.yaml
-  - collect/dma/v1.yaml
-  - collect/dma/dmamux.yaml
-  - patches/flash/g0.yaml
-  - patches/rtc/alarm.yaml
-  - collect/rtc/tamp_bkpr.yaml
-  - collect/rtc/alarm.yaml
   - patches/tim/group.yaml

@@ -22,13 +22,28 @@ ADC:
 CRS:
   _strip: CRS_
 
+DMAMUX:
+  _include:
+    - collect/dma/dmamux.yaml
+
 GPIO?:
   _include:
     - fields/gpio/gpio_l5_u5.yaml
     - collect/gpio/v2r.yaml
 
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BCDF]:
+  _include: collect/gpio/v2r_derive.yaml
+
 I2C?:
   _strip: I2C_
+
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    #- fields/rtc/v3.yaml
+    #- collect/rtc/alarm.yaml
 
 SPI1:
   _include:
@@ -40,27 +55,10 @@ SPI?:
 
 TIM[123]:
   _strip: TIM?_
-  _modify:
-    CCMR1:
-      name: CCMR1_Input
-    CCMR1_ALTERNATE1:
-      name: CCMR1_Output
-    CCMR2:
-      name: CCMR2_Input
-    CCMR2_ALTERNATE1:
-      name: CCMR2_Output
-  CCMR2_Output:
-    _modify:
-      OC3M_1:
-        name: OC3M_3
-      OC4M_1:
-        name: OC4M_3
-  CCMR1_Output:
-    _modify:
-      OC1M_1:
-        name: OC1M_3
-      OC2M_1:
-        name: OC2M_3
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/v2/ocm_bit3.yaml
   SMCR:
     _modify:
       TS:
@@ -77,7 +75,38 @@ TIM*:
     - TIM*__
     - TIM?*_
 
-TIM1[467]:
+TIM1:
+  _include:
+    - fields/tim/v2/tim1.yaml
+    - collect/tim/ccr.yaml
+
+TIM2:
+  _modify:
+    CNT_ALTERNATE1:
+      name: CNT_remap
+  _include:
+    - fields/tim/v2/tim2.yaml
+    - collect/tim/ccr.yaml
+
+TIM3:
+  _modify:
+    CNT_ALTERNATE1:
+      name: CNT_remap
+  _include:
+    - fields/tim/basic.yaml
+    - collect/tim/ccr.yaml
+
+TIM14:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - fields/tim/v2/tim13.yaml
+    - collect/tim/ccr.yaml
+  CCMR1_Output:
+    _modify:
+      OC1M_1:
+        name: OC1M_3
+
+TIM1[67]:
   _modify:
     CCMR1:
       name: CCMR1_Input
@@ -87,11 +116,9 @@ TIM1[467]:
     _modify:
       OC1M_1:
         name: OC1M_3
-
-TIM[23]:
-  _modify:
-    CNT_ALTERNATE1:
-      name: CNT_remap
+  _include:
+    - fields/tim/v2/tim16.yaml
+    - collect/tim/ccr.yaml
 
 USART1:
   _modify:
@@ -106,9 +133,9 @@ USART1:
 
 USB:
   _strip: USB_
+  _include:
+    - collect/usb/chepr.yaml
 
 _include:
   - patches/c0.yaml
   - patches/nvic/2_prio_bits.yaml
-  - collect/dma/dmamux.yaml
-  - collect/usb/chepr.yaml

@@ -43,10 +43,46 @@ AES:
     - patches/aes/fields.yaml
     - fields/aes/v1.yaml
 
+CRC:
+  _include:
+    - patches/crc/crc_rename_init.yaml
+    - patches/crc/crc_rename_pol.yaml
+    - fields/crc/crc_advanced.yaml
+    - fields/crc/crc_idr_8bit.yaml
+    - fields/crc/crc_pol.yaml
+
+DAC:
+  _include:
+    - fields/dac/dac_common_1ch.yaml
+    - fields/dac/dac_dmaudr.yaml
+
+DMA?:
+  _include:
+    - fields/dma/dma_v1_with_remapping.yaml
+    - collect/dma/v1.yaml
+
+EXTI:
+  _include:
+    - fields/exti/common.yaml
+
+FLASH:
+  _include:
+    - patches/flash/l0.yaml
+    - fields/flash/flash_l0.yaml
+
+FW:
+  _include:
+    - fields/fw/fw_l0_l4.yaml
+
 GPIO?:
   _include:
     - fields/gpio/gpio_g0_l0.yaml
     - collect/gpio/v2r.yaml
+
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[B]:
+  _include: collect/gpio/v2r_derive.yaml
 
 I2C?:
   _include:
@@ -61,6 +97,10 @@ LCD:
   _delete: RAM_COM*
   _include:
     - patches/lcd/ram_segment_48.yaml
+
+LPTIM:
+  _include:
+    - fields/lptim/lptim_v1.yaml
 
 LPUART1:
   _include:
@@ -103,6 +143,18 @@ RCC:
     _modify:
       TM12RST:
         name: TIM22RST
+  _include:
+    - fields/rcc/rcc_l0_l1_common.yaml
+    - fields/rcc/rcc_l0.yaml
+
+RTC:
+  _include:
+    - patches/rtc/l0.yaml
+    - patches/rtc/alarm.yaml
+    - fields/rtc/rtc_common.yaml
+    - fields/rtc/rtc_l0.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
 
 SPI?:
   _include:
@@ -122,45 +174,43 @@ SYSCFG:
         description: VREFINT reference for HSI48 oscillator enable bit
         bitOffset: 13
         bitWidth: 1
+  _include:
+    - patches/syscfg/l0_cfgr.yaml
+    - fields/syscfg/syscfg_l0.yaml
 
-TIM*:
+TIM2:
+  _modify:
+    CCR?:
+      size: 16
+  _include:
+    - patches/tim/size16b.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/tim2_l0.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim3.yaml
+    - collect/tim/ccr.yaml
+
+TIM6:
+  _include:
+    - patches/tim/size16b.yaml
+    - fields/tim/v1/tim6.yaml
+
+TIM2[12]:
   _include:
     - patches/tim/size16b.yaml
     - fields/tim/basic.yaml
-
-"TIM[23]":
-  _include:
-    - patches/tim/l0.yaml
-    - fields/tim/tim2_l0.yaml
-
-"TIM[2345]":
-  _include:
-    - fields/tim/tim_16bit.yaml
-
-"TIM[1-58]":
-  _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
-    - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
     - fields/tim/tim_ckd.yaml
-
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-TIM2?:
-  _include: fields/tim/tim2x.yaml
+    - fields/tim/tim2x.yaml
+    - fields/tim/ccr.yaml
+    - fields/tim/v1/ccm.yaml
+    - collect/tim/ccr.yaml
 
 TIM21:
   _include: fields/tim/tim21.yaml
 
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
+TSC:
+  _include:
+    - collect/tsc/iogcr.yaml
 
 USART*:
   _include:
@@ -172,43 +222,21 @@ USART*:
     - patches/usart/merge_BRR_fields.yaml
     - fields/usart/usart_v2B.yaml
 
+USB:
+  _strip: USB_
+  _include:
+    - patches/usb/rename_EPxR_EPTYPE_field.yaml
+    - fields/usb/usb_with_LPM.yaml
+
 WWDG:
   _include:
     - patches/16bit.yaml
     - fields/wwdg/wwdg.yaml
 
 _include:
-  - patches/flash/l0.yaml
   - patches/firewall/l0.yaml
-  - patches/rtc/l0.yaml
-  - patches/syscfg/l0_cfgr.yaml
   - patches/nvic/l0_prio_bits.yaml
-  - ./collect/tsc/iogcr.yaml
   - patches/usb/rename_USB_FS_peripheral_to_USB.yaml
-  - patches/usb/unprefix_registers.yaml
-  - patches/usb/rename_EPxR_EPTYPE_field.yaml
-  - patches/crc/crc_rename_init.yaml
-  - patches/crc/crc_rename_pol.yaml
-  - fields/crc/crc_advanced.yaml
-  - fields/crc/crc_idr_8bit.yaml
-  - fields/crc/crc_pol.yaml
   - fields/dbg/dbg_l0.yaml
-  - fields/dac/dac_common_1ch.yaml
-  - fields/dac/dac_dmaudr.yaml
-  - fields/dma/dma_v1_with_remapping.yaml
-  - collect/dma/v1.yaml
-  - fields/exti/exti.yaml
-  - fields/flash/flash_l0.yaml
-  - fields/fw/fw_l0_l4.yaml
-  - fields/lptim/lptim_v1.yaml
   - fields/pwr/pwr_l0.yaml
-  - fields/rcc/rcc_l0_l1_common.yaml
-  - fields/rcc/rcc_l0.yaml
-  - fields/rtc/rtc_common.yaml
-  - fields/rtc/rtc_l0.yaml
-  - patches/rtc/alarm.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
-  - fields/syscfg/syscfg_l0.yaml
   - patches/tim/group.yaml
-  - fields/usb/usb_with_LPM.yaml

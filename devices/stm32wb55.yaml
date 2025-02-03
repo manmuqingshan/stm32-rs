@@ -20,8 +20,6 @@ ADC1:
         description: Regular channel sequence length
   _delete:
     - CCR # this is part of the ADC_Common block.
-
-ADC?:
   _include:
     - patches/adc/offset_en.yaml
     - patches/adc/split.yaml
@@ -42,6 +40,10 @@ AES?:
   _include:
     - patches/aes/fields.yaml
     - fields/aes/v2.yaml
+
+DMAMUX1:
+  _include:
+    - collect/dma/dmamux.yaml
 
 EXTI:
   _modify:
@@ -64,41 +66,45 @@ EXTI:
     _modify:
       RT_31:
         name: RT31
-    _split: [RT]
+    _split: RT
 
   FTSR1:
     _modify:
       FT_31:
         name: FT31
-    _split: [FT]
+    _split: FT
 
   SWIER1:
     _modify:
       SWI_31:
         name: SWI31
-    _split: [SWI]
+    _split: SWI
 
   PR1:
     _modify:
       PIF_31:
         name: PIF31
-    _split: [PIF]
+    _split: PIF
 
   IMR1:
-    _split: [IM]
+    _split: IM
   IMR2:
-    _split: [IM]
+    _split: IM
   C2IMR1:
-    _split: [IM]
+    _split: IM
   C2IMR2:
-    _split: [IM]
+    _split: IM
 
 GPIO?:
   _include:
     - fields/gpio/v2/common.yaml
-GPIO[A-E]:
-  _include:
-    - collect/gpio/v2.yaml
+
+GPIO[A-E]: #H
+  _include: collect/gpio/v2.yaml
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BCE]:
+  _include: collect/gpio/v2_derive.yaml
 
 HSEM:
   _modify:
@@ -106,6 +112,8 @@ HSEM:
       name: C1IER
     C2IER0:
       name: C2IER
+  _include:
+    - collect/hsem/r.yaml
 
 IPCC:
   _modify:
@@ -134,9 +142,22 @@ RCC:
     - fields/rcc/rcc_wb.yaml
     - fields/rcc/rcc_wx_c2.yaml
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/rtc_common.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
+
 SAI1:
   _delete:
     - GCR
+  _include:
+    - patches/sai/sai_v1.yaml
+    - fields/sai/sai.yaml
+    - collect/sai/ch.yaml
+    - collect/sai/pdm.yaml
 
 SPI?:
   _include:
@@ -162,10 +183,25 @@ SYSCFG:
       addressOffset: 0x110
 
 TIM1:
-  _include: patches/tim/v2/oc5m_bit3.yaml
+  CCMR1_Input:
+    _modify:
+      C1F:
+        name: IC1F
+  _include:
+    - patches/tim/v2/oc5m_bit3.yaml
+    - fields/tim/v2/tim1.yaml
+    - collect/tim/ccr.yaml
 
 TIM2:
-  _include: patches/tim/tim2_common_32bit.yaml
+  _include:
+    - patches/tim/tim2_common_32bit.yaml
+    - fields/tim/basic.yaml
+    - fields/tim/tim_32bit.yaml
+    - fields/tim/tim_gp1.yaml
+    - fields/tim/tim_ckd.yaml
+    - fields/tim/ccr.yaml
+    - fields/tim/v2/ccm_extended.yaml
+    - collect/tim/ccr.yaml
   CNT:
     _add:
       UIFREMAP_CNT:
@@ -181,24 +217,13 @@ TIM2:
       CNT_L:
         bitOffset: 0
 
-"TIM[12-58],TIM19,TIM20":
-  _include: fields/tim/v2/ccm_extended.yaml
-
-"TIM1[013467]":
-  _include: fields/tim/v2/ccm_common.yaml
+TIM1[67]:
+  _include:
+    - fields/tim/v2/tim16.yaml
+    - collect/tim/ccr.yaml
 
 WWDG:
   _include: patches/16bit.yaml
 
 _include:
-  - collect/dma/dmamux.yaml
-  - patches/rtc/alarm.yaml
-  - patches/rtc/rtc_cr.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
-  - patches/sai/sai_v1.yaml
-  - fields/sai/sai.yaml
-  - collect/sai/ch.yaml
-  - collect/sai/pdm.yaml
   - patches/adc/wb_adc_common.yaml
-  - collect/hsem/r.yaml

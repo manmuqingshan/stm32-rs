@@ -9,7 +9,7 @@ _copy:
 _derive:
   TIM4: TIM3
 
-ADC?:
+ADC1:
   _include:
     - patches/adc/g4.yaml
     - fields/adc/adc_v3_g4.yaml
@@ -29,20 +29,49 @@ AES:
 COMP:
   _strip: COMP_
 
+CORDIC:
+  _include:
+    - patches/cordic/g4.yaml
+    - fields/cordic/v1.yaml
+
 DAC?:
   _strip: DAC_
+  _include:
+    - fields/dac/dac_wl.yaml
+    - fields/dac/dac_wl_12bit.yaml
+    - fields/dac/dac_wl_8bit.yaml
+
+DMA1:
+  _include:
+    - patches/dma/g4_ifcr.yaml
+    - collect/dma/v1.yaml
+
+DMAMUX:
+  _include:
+    - collect/dma/dmamux.yaml
 
 EXTI:
   _include:
     - patches/exti/add_fpu_interrupt.yaml
+    - patches/exti/g4.yaml
+    - fields/exti/common.yaml
 
 FDCAN:
   _strip: FDCAN_
+
+FLASH:
+  _include:
+    - fields/flash/flash_g4.yaml
 
 GPIO?:
   _include:
     - fields/gpio/v2/common.yaml
     - collect/gpio/v2.yaml
+
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BC]:
+  _include: collect/gpio/v2_derive.yaml
 
 I2C?:
   _include:
@@ -58,37 +87,73 @@ PWR:
 
 RCC:
   _strip: RCC_
+  _include:
+    - fields/rcc/g4.yaml
+    - fields/rcc/rcc_g4.yaml
+
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
+SAI:
+  _include:
+    - patches/sai/sai_v1.yaml
+    - fields/sai/sai.yaml
+    - collect/sai/ch.yaml
+    - collect/sai/pdm.yaml
 
 SPI?:
   _include:
     - patches/16bit.yaml
     - patches/spi/dr8.yaml
 
-"TIM[123]":
+TAMP:
+  _include:
+    - collect/rtc/tamp_bkpr.yaml
+
+TIM1:
   _include:
     - patches/tim/icpsc.yaml
     - patches/tim/v2/oc5m_bit3.yaml
+    - patches/tim/v2/tim_20bit.yaml
+    - fields/tim/v3/tim1.yaml
+    - collect/tim/ccr.yaml
 
 TIM2:
-  _include: patches/tim/v2/tim_32bit.yaml
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/v2/oc5m_bit3.yaml
+    - patches/tim/v2/tim_32bit.yaml
+    - fields/tim/v3/tim2.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[13],TIM15,TIM16":
-  _include: patches/tim/v2/tim_20bit.yaml
+TIM3:
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/v2/oc5m_bit3.yaml
+    - patches/tim/v2/tim_20bit.yaml
+    - fields/tim/v3/tim3.yaml
+    - collect/tim/ccr.yaml
 
-"TIM9,TIM12,TIM15":
-  _include: fields/tim/v2/ccm9_15.yaml
+TIM6:
+  _include:
+    - patches/tim/v2/arr_20bit.yaml
+    - fields/tim/v3/tim6.yaml
 
-"TIM[12-58],TIM19,TIM20":
-  _include: fields/tim/v2/ccm_extended.yaml
+TIM15:
+  _include:
+    - patches/tim/v2/tim_20bit.yaml
+    - fields/tim/v3/tim15.yaml
+    - collect/tim/ccr.yaml
 
-"TIM1[013467]":
-  _include: fields/tim/v2/ccm_common.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+TIM16:
+  _include:
+    - patches/tim/v2/tim_20bit.yaml
+    - fields/tim/v3/tim16.yaml
+    - collect/tim/ccr.yaml
 
 UCPD1:
   _include:
@@ -110,37 +175,18 @@ USART*:
     - patches/usart/merge_BRR_fields.yaml
     - fields/usart/usart_v2C.yaml
 
+USB:
+  _include:
+    - patches/usb/g4.yaml
+
 WWDG:
   _include:
     - patches/16bit.yaml
     - fields/wwdg/wwdg_v2.yaml
 
 _include:
-  - collect/dma/dmamux.yaml
-  - patches/dma/g4_ifcr.yaml
-  - collect/dma/v1.yaml
-  - fields/rcc/g4.yaml
-  - patches/exti/g4.yaml
-  - fields/exti/exti.yaml
   - patches/comp/g4.yaml
   - collect/comp/csr.yaml
-  - patches/cordic/g4.yaml
-  - fields/cordic/cordic_g4.yaml
-  - patches/rtc/alarm.yaml
-  - collect/rtc/tamp_bkpr.yaml
-  - patches/rtc/rtc_cr.yaml
-  - patches/rtc/rtc_cr.yaml
-  - collect/rtc/alarm.yaml
-  - patches/sai/sai_v1.yaml
-  - fields/sai/sai.yaml
-  - collect/sai/pdm.yaml
-  - collect/sai/ch.yaml
-  - fields/dac/dac_wl.yaml
-  - fields/dac/dac_wl_12bit.yaml
-  - fields/dac/dac_wl_8bit.yaml
   - fields/opamp/opamp_g4_common.yaml
   - patches/usb/rename_USB_FS_peripheral_to_USB.yaml
-  - patches/usb/g4.yaml
-  - fields/rcc/rcc_g4.yaml
   - patches/tim/group.yaml
-  - fields/flash/flash_g4.yaml

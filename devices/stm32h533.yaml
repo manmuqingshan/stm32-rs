@@ -1,0 +1,235 @@
+_svd: ../svd/stm32h533.svd
+
+_modify:
+  size: 0x20
+  OTFDEC:
+    name: OTFDEC1
+  OTFDEC_S:
+    name: OTFDEC1_S
+  ADC:
+    name: ADC1
+  ADC_S:
+    name: ADC1_S
+  FDCAN:
+    name: FDCAN1
+  FDCAN_S:
+    name: FDCAN1_S
+  GPDMA:
+    name: GPDMA1
+  GPDMA_S:
+    name: GPDMA1_S
+  I2C:
+    name: I2C1
+  I2C_S:
+    name: I2C1_S
+  I3C:
+    name: I3C1
+  I3C_S:
+    name: I3C1_S
+  SDMMC:
+    name: SDMMC1
+  SDMMC_S:
+    name: SDMMC1_S
+  SPI:
+    name: SPI1
+  SPI_S:
+    name: SPI1_S
+  UCPD:
+    name: UCPD1
+  UCPD_S:
+    name: UCPD1_S
+  USART:
+    name: USART1
+  USART_S:
+    name: USART1_S
+
+ADC[12]:
+  _strip: ADC_
+  _include:
+    - patches/adc/split.yaml
+    - fields/adc/adc_v3.yaml
+    - fields/adc/adc_h5.yaml
+    - collect/adc/v3.yaml
+  CFGR:
+    _merge: EXTSEL*
+  SQR?:
+    SQ*: [0, 19]
+
+ADCC:
+  _strip: ADC_
+
+CRC:
+  _include:
+    - patches/crc/crc_rename_init.yaml
+    - fields/crc/crc_advanced.yaml
+    # - fields/crc/crc_idr_32bit.yaml
+    - fields/crc/crc_pol.yaml
+
+EXTI:
+  _include:
+    - fields/exti/common.yaml
+    - fields/exti/exti_priv.yaml
+
+GPDMA?:
+  _strip: GPDMA_
+  _include:
+    - fields/dma/gpdma/h5.yaml
+    - collect/dma/gpdma/h5.yaml
+
+GPIOC:
+  _strip: GPIO_
+
+GPIO?:
+  _include:
+    - fields/gpio/gpio_l5_u5.yaml
+    - collect/gpio/v2r.yaml
+
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BCDEFGHI]:
+  _include: collect/gpio/v2r_derive.yaml
+
+#GTZC1_MPCBB?: # Seems to be completely missing from svd
+#  _strip: GTZC1_MPCBB?_
+#  _include:
+#    - collect/gtzc/h5_u5.yaml
+
+GTZC1_TZIC:
+  _strip: GTZC1_TZIC_
+
+I2C?:
+  _include:
+    - fields/i2c/v3.yaml
+
+IWDG:
+  _include:
+    - patches/16bit_with_mask.yaml
+    - fields/iwdg/h5.yaml
+
+LPTIM?:
+  _strip:
+    - LPTIM?_
+
+PWR:
+  _include:
+    - fields/pwr/pwr_h5.yaml
+
+RCC:
+  _include:
+    - patches/rcc/h523_h533.yaml
+    - fields/rcc/v3/h56x_h57x.yaml
+
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
+SPI?:
+  _include:
+    - patches/spi/rxtxdr.yaml
+    - fields/spi/spi_v3_base.yaml
+    - fields/spi/spi_v3_cfg1_bpass.yaml
+
+TIM?:
+  _strip: TIM?_
+
+TIM1?:
+  _strip: TIM1?_
+
+TIM[18]:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/tim1_mms_ts_sms.yaml
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/tim_common_ext.yaml
+    - fields/tim/v3/tim1.yaml
+    - collect/tim/ccr.yaml
+
+TIM[25]:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/tim_uifremap.yaml
+    - patches/tim/tim2_mms_ts_sms.yaml
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/tim_common_ext.yaml
+    - fields/tim/v3/tim2.yaml
+    - collect/tim/ccr.yaml
+  CNT:
+    _modify:
+      CNT:
+        bitOffset: 0
+        bitWidth: 32
+
+TIM[34]:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/tim2_mms_ts_sms.yaml
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/tim_common_ext.yaml
+    - fields/tim/v3/tim3.yaml
+    - collect/tim/ccr.yaml
+
+TIM[67]:
+  _include:
+    - fields/tim/v3/tim6.yaml
+
+TIM15:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/v2/ocm1_bit3.yaml
+    - fields/tim/v3/tim9.yaml
+    - collect/tim/ccr.yaml
+
+UCPD1:
+  _strip: UCPD_
+  _include:
+    - patches/ucpd/rxordseten_split.yaml
+    #- fields/ucpd/ucpd_v1.yaml
+
+USART?:
+  _strip: USART_
+  _include:
+    - patches/usart/rename_CR1_ISR_enabled_disabled.yaml
+    - patches/usart/merge_CR3_WUS_field.yaml
+    - fields/usart/usart_v2B.yaml
+    - fields/usart/usart_fifoen.yaml
+    - fields/usart/sync_slave.yaml
+    - fields/usart/smartcard.yaml
+    - fields/usart/prescalar.yaml
+
+USB:
+  _include:
+    - collect/usb/chepr.yaml
+
+USBSRAM:
+  _strip: USBSRAM_CHEP_
+
+WWDG:
+  _include:
+    - patches/16bit_with_mask.yaml
+    - fields/wwdg/wwdg_v2.yaml
+
+SBS: # TODO: Dont do this, this will be undone by patches/h5.yaml
+  PMCR:
+    _modify:
+      PB6_FMP:
+        name: PB6_FMPLUS
+      PB7_FMP:
+        name: PB7_FMPLUS
+      PB8_FMP:
+        name: PB8_FMPLUS
+
+# todo: Once tested, apply these to the other H5 variants as applicable, or possibly
+# todo place them in the common/h5.yaml
+_include:
+  - patches/h5.yaml
+  - patches/h523_h533.yaml
+  - patches/h5_security.yaml
+
+  # - collect/flash/secbbr.yaml
+
+  - fields/crs/crs.yaml

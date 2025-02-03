@@ -6,14 +6,130 @@ _modify:
   LCD:
     groupName: LCD
 
+ADC:
+  _strip: ADC_
+
+CRC:
+  _strip: CRC_
+
+CRS:
+  _strip: CRS_
+
+DAC:
+  _strip: DAC_
+
+DBGMCU:
+  _strip: DBGMCU_
+
+DMAMUX:
+  _strip: DMAMUX_
+
+EXTI:
+  _strip: EXTI_
+
+FLASH:
+  _strip: FLASH_
+
 GPIO?:
   _strip: GPIO?_
   _include:
     - fields/gpio/gpio_l5_u5.yaml
     - collect/gpio/v2r.yaml
 
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BCDEF]:
+  _include: collect/gpio/v2r_derive.yaml
+
+IWDG:
+  _strip: IWDG_
+
 LCD:
   _delete: LCD_RAM*
   _strip: LCD_
   _include:
     - patches/lcd/ram_segment_48.yaml
+
+LPTIM?:
+  _strip: LPTIM?_
+
+PWR:
+  _strip: PWR_
+
+RCC:
+  _strip: RCC_
+
+RNG:
+  _strip: RNG_
+
+RTC:
+  _strip: RTC_
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
+SYSCFG:
+  _strip: SYSCFG_
+
+TAMP:
+  _strip: TAMP_
+
+TIM?:
+  _strip: TIM?_
+
+TIM??:
+  _strip: TIM??_
+
+TIM1:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/v2/tim1.yaml
+    - collect/tim/ccr.yaml
+
+TIM2:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/v2/tim2.yaml
+    - collect/tim/ccr.yaml
+
+TIM3:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/v2/tim3.yaml
+    - collect/tim/ccr.yaml
+
+TIM[67]:
+  _include:
+    - fields/tim/v2/tim6.yaml
+
+TIM15:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/v2/ocm1_bit3.yaml
+    - fields/tim/v2/tim15.yaml
+    - collect/tim/ccr.yaml
+
+TIM16:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - fields/tim/v2/tim16.yaml
+    - collect/tim/ccr.yaml
+
+TSC:
+  _strip: TSC_
+
+USB:
+  _strip: USB_
+
+VREFBUF:
+  _strip: VREFBUF_
+
+WWDG:
+  _strip: WWDG_

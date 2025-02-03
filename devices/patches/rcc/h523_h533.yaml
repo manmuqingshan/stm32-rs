@@ -1,0 +1,4 @@
+APB3ENR:
+  _modify:
+    VREFBUFEN:
+      name: VREFEN

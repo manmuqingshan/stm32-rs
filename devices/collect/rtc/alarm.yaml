@@ -1,8 +1,35 @@
-RTC:
+CR:
   _array:
-    ALRM?R:
-      description: Alarm %s register
-    ALRM?SSR:
-      description: Alarm %s sub-second register
-    "?~ALR?BINR":
-      description: Alarm %s binary mode register
+    ALR[AB]E: {}
+    ALR[AB]IE: {}
+
+"?~ISR":
+  _array:
+    ALR[AB]WF:
+      description: Alarm %s write flag
+    ALR[AB]F:
+      description: Alarm %s flag
+
+"?~ICSR":
+  _array:
+    "?~ALR[AB]WF":
+      description: Alarm %s write flag
+
+"?~SR":
+  _array:
+    ALR[AB]F:
+      description: Alarm %s flag
+
+"?~MISR":
+  _array:
+    ALR[AB]MF:
+      description: Alarm %s masked flag
+
+_array:
+  ALRM[AB]R:
+    description: Alarm %s register
+    displayName: ALRM%sR
+  "?~ALRM[AB]SSR":
+    description: Alarm %s sub-second register
+  "?~ALR[AB]BINR":
+    description: Alarm %s binary mode register

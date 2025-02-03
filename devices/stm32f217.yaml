@@ -13,31 +13,77 @@ ADC_Common:
     - patches/adc/multi.yaml
     - fields/adc/adc_v2_multi.yaml
 
-ADC?:
+ADC1:
   _include:
     - fields/adc/adc_v2.yaml
     - fields/adc/adc_v2/adc_v2_extsel_c.yaml
     - collect/adc/jofr_jdr.yaml
 
-# Merge the hundreds of individual bit fields into single fields for the
-# crypt key/iv registers.
+CAN?:
+  _include:
+    - fields/can/can.yaml
+    - collect/can/can.yaml
+    - collect/can/filter_bank.yaml
+
+CRC:
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
+
 CRYP:
-  "K[0123][LR]R":
-    _merge:
-      - b*
-  "IV[01][LR]R":
-    _merge:
-      - IV*
+  _include:
+    - patches/cryp/merge_fields.yaml
+    - collect/cryp/v1.yaml
+
+DAC:
+  _include:
+    - fields/dac/dac_common_2ch.yaml
+    - fields/dac/dac_wavegen.yaml
+    - fields/dac/dac_dmaudr.yaml
+
+DMA?:
+  _include:
+    - patches/dma/fcr_wo.yaml
+    - patches/dma/dma_v2.yaml
+    - fields/dma/dma_v2.yaml
+    - collect/dma/st.yaml
 
 EXTI:
   _include:
     - fields/exti/common.yaml
     - collect/exti/farray.yaml
 
+FLASH:
+  _include:
+    - patches/flash/optcr_nwrp.yaml
+    - fields/flash/flash_v1.yaml
+    - fields/flash/flash_latency8.yaml
+    - fields/flash/flash_optcr.yaml
+    - fields/flash/flash_optcr_wdg.yaml
+    - collect/flash/optcr_nwrp.yaml
+
+FSMC:
+  _include:
+    - patches/fsmc/fsmc_sramfix_v3.yaml
+    - patches/fsmc/fsmc_nand.yaml
+    - fields/fsmc/fsmc_sram.yaml
+    - fields/fsmc/fsmc_nand.yaml
+    - collect/fsmc/sram.yaml
+    - collect/fsmc/nand_v1.yaml
+
 GPIO?:
   _include:
     - fields/gpio/v2/common.yaml
     - collect/gpio/v2.yaml
+
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BI]:
+  _include: collect/gpio/v2_derive.yaml
+
+HASH:
+  _include:
+    - collect/hash/v1.yaml
 
 I2C?:
   _include:
@@ -55,6 +101,10 @@ IWDG:
 MPU:
   _strip: MPU_
 
+PWR:
+  _include:
+    - fields/pwr/pwr_v1.yaml
+
 RCC:
   APB1RSTR:
     _modify:
@@ -62,6 +112,23 @@ RCC:
         name: USART2RST
       UART3RST:
         name: USART3RST
+  _include:
+    - patches/rcc/f2.yaml
+    - patches/rcc/rcc_merge_sw_sws.yaml
+    - patches/rcc/rcc_merge_rtcsel.yaml
+    - fields/rcc/v2/common.yaml
+    - fields/rcc/v2/i2s.yaml
+    - fields/rcc/v2/i2s_pll.yaml
+
+RTC:
+  _derive:
+    TSTR: TR
+    TSDR: DR
+  _include:
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/v2_basic_wakeup.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
 
 SPI?:
   _include:
@@ -69,50 +136,42 @@ SPI?:
     - patches/spi/dr8.yaml
     - fields/spi/spi_v1.yaml
 
-"TIM1[0134]":
-  _include: patches/tim/tim10_14_missing_opm.yaml
-
-"TIM[1]":
-  _include: patches/tim/icpsc.yaml
-
-TIM*:
+TIM1:
   _include:
-    - fields/tim/basic.yaml
+    - patches/tim/icpsc.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim1.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[34]":
-  _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
-
-"TIM[25]":
+TIM[25]:
   _include:
     - patches/tim/tim2_common_32bit.yaml
-    - fields/tim/tim_32bit.yaml
-
-"TIM[1-58]":
-  _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
     - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim2.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-58-9],TIM??":
+TIM3:
   _include:
-    - fields/tim/tim_ckd.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim3.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
+TIM6:
+  _include:
+    - fields/tim/v1/tim6.yaml
 
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
+TIM9:
+  _include:
+    - patches/tim/tim9_ic1f.yaml
+    - fields/tim/v1/tim9.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+TIM10:
+  _include:
+    - patches/tim/tim10_14_missing_opm.yaml
+    - fields/tim/v1/tim10.yaml
+    - collect/tim/ccr.yaml
 
 UART*:
   _include:
@@ -132,39 +191,10 @@ WWDG:
     - fields/wwdg/wwdg.yaml
 
 _include:
-  - fields/can/can.yaml
-  - collect/can/can.yaml
-  - collect/can/filter_bank.yaml
-  - collect/cryp/v1.yaml
-  - patches/fsmc/fsmc_sramfix_v3.yaml
-  - patches/fsmc/fsmc_nand.yaml
-  - fields/fsmc/fsmc_sram.yaml
-  - fields/fsmc/fsmc_nand.yaml
-  - collect/fsmc/sram.yaml
-  - collect/fsmc/nand_v1.yaml
   - patches/ethernet/f2_f4.yaml
   - patches/ethernet/mmc.yaml
-  - fields/dac/dac_wavegen.yaml
-  - fields/dac/dac_common_2ch.yaml
-  - fields/dac/dac_dmaudr.yaml
-  - patches/rcc/f2.yaml
-  - patches/rcc/rcc_merge_sw_sws.yaml
-  - patches/rcc/rcc_merge_rtcsel.yaml
-  - fields/rcc/rcc_v2.yaml
-  - fields/rcc/rcc_v2_i2s.yaml
-  - fields/rcc/rcc_v2_i2s_pll.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
   - patches/adc/adc_common_group_name.yaml
-  - patches/dma/fcr_wo.yaml
-  - patches/dma/dma_v2.yaml
-  - fields/dma/dma_v2.yaml
-  - collect/dma/st.yaml
-  - fields/pwr/pwr_v1.yaml
   - patches/tim/group.yaml
-  - collect/hash/v1.yaml
-  - patches/rtc/rtc_cr.yaml
-  - collect/rtc/bkpr.yaml
   - patches/usb_otg/fs_remove_prefix.yaml
   - patches/usb_otg/fs_v1.yaml
   - patches/usb_otg/fs_v1_novbussens.yaml

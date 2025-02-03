@@ -42,12 +42,15 @@ ADC_Common:
 ADC1:
   _include:
     - patches/adc/smpx_18.yaml
-
-ADC?:
-  _include:
     - fields/adc/adc_v2.yaml
     - fields/adc/adc_v2/adc_v2_extsel_c.yaml
     - collect/adc/jofr_jdr.yaml
+
+CAN?:
+  _include:
+    - fields/can/can.yaml
+    - collect/can/can.yaml
+    - collect/can/filter_bank.yaml
 
 CRC:
   # The SVD calls the RESET field "CR", fix per RM0386
@@ -55,14 +58,31 @@ CRC:
     _modify:
       CR:
         name: RESET
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
 
-# Merge the hundreds of individual bit fields into single fields for the
-# crypt key/iv registers.
 CRYP:
-  "K[0123][LR]R":
-    _merge: b*
-  "IV[01][LR]R":
-    _merge: IV*
+  _include:
+    - patches/cryp/merge_fields.yaml
+    - collect/cryp/v2.yaml
+
+DAC:
+  _include:
+    - fields/dac/dac_f4_2ch.yaml
+    - fields/dac/dac_wavegen.yaml
+    - fields/dac/dac_dmaudr.yaml
+
+DMA2D:
+  _include:
+    - fields/dma/dma2d_v1.yaml
+
+DMA?:
+  _include:
+    - patches/dma/fcr_wo.yaml
+    - patches/dma/dma_v2.yaml
+    - fields/dma/dma_v2.yaml
+    - collect/dma/st.yaml
 
 DSI:
   _add:
@@ -71,6 +91,8 @@ DSI:
         description: DSI host global interrupt
         value: 92
   _strip: DSI_
+  _include:
+    - collect/dsi/isr.yaml
 
 EXTI:
   _include:
@@ -79,15 +101,45 @@ EXTI:
     - collect/exti/farray.yaml
 
 FLASH:
-  ACR:
-    _modify:
-      LATENCY:
-        bitWidth: 4
+  _include:
+    - patches/flash/latency_4b.yaml
+    - patches/flash/optcr_nwrp.yaml
+    - patches/flash/optcr1_nwrp.yaml
+    - fields/flash/flash_v1.yaml
+    - fields/flash/flash_latency16.yaml
+    - fields/flash/flash_optcr.yaml
+    - fields/flash/flash_optcr_bfb2.yaml
+    - fields/flash/flash_optcr_db1m.yaml
+    - fields/flash/flash_optcr_sprmod.yaml
+    - fields/flash/flash_optcr_wdg.yaml
+    - fields/flash/flash_optcr1_nwrp.yaml
+    - collect/flash/optcr_nwrp.yaml
+    - collect/flash/optcr1_nwrp.yaml
+
+FMC:
+  _include:
+    - patches/fsmc/fsmc_sramfix.yaml
+    - patches/fsmc/fsmc_nand.yaml
+    - fields/fsmc/fsmc_sram.yaml
+    - fields/fsmc/fsmc_wfdis.yaml
+    - fields/fsmc/fsmc_nand.yaml
+    - fields/fsmc/fsmc_sd.yaml
+    - collect/fsmc/sram.yaml
+    - collect/fsmc/sd.yaml
 
 GPIO?:
   _include:
     - fields/gpio/v2/common.yaml
     - collect/gpio/v2.yaml
+
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BK]:
+  _include: collect/gpio/v2_derive.yaml
+
+HASH:
+  _include:
+    - collect/hash/v2.yaml
 
 I2C?:
   _include:
@@ -101,6 +153,12 @@ IWDG:
   _include:
     - patches/16bit.yaml
     - fields/iwdg/iwdg.yaml
+
+LTDC:
+  _include:
+    - patches/ltdc/f4_f7_ltdc_bccr.yaml
+    - fields/ltdc/ltdc.yaml
+    - collect/ltdc/layer.yaml
 
 OTG_HS_*:
   _strip: OTG_HS_
@@ -116,6 +174,9 @@ PWR:
       ADCDC1:
         bitOffset: 13
         bitWidth: 1
+  _include:
+    - patches/pwr/f4.yaml
+    - fields/pwr/pwr_f469_f479.yaml
 
 # Fix misnamed RCC enable bits
 RCC:
@@ -147,6 +208,21 @@ RCC:
         name: CK48MSEL
       SDMMCSEL:
         name: SDIOSEL
+  _include:
+    - patches/rcc/rcc_merge_rtcsel.yaml
+    - fields/rcc/v2/common.yaml
+    - fields/rcc/v2/pllcfgr_pllr.yaml
+    - fields/rcc/v2/i2s.yaml
+    - fields/rcc/v2/i2s_pll.yaml
+    - fields/rcc/v2/i2s_pllq.yaml
+    - fields/rcc/v2/sai_pllp.yaml
+    - fields/rcc/v2/sai_pllr.yaml
+    - fields/rcc/v2/bdcr_lsemod.yaml
+    - fields/rcc/v2/dckcfgr_timpre.yaml
+    - fields/rcc/v2/dckcfgr_i2s_sai_f4.yaml
+    - fields/rcc/v2/dckcfgr_saidivr.yaml
+    - fields/rcc/v2/dckcfgr_48m_sd.yaml
+    - fields/rcc/v2/dckcfgr_dsisel.yaml
 
 RNG:
   _include: fields/rng/rng_f4_ced.yaml
@@ -157,9 +233,27 @@ RNG:
         bitOffset: 5
         bitWidth: 1
 
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/f4_cr.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/rtc_common.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
+
 SAI:
   _delete:
     - GCR
+  _include:
+    - patches/sai/sai_v1.yaml
+    - fields/sai/sai.yaml
+    - collect/sai/ch.yaml
+
+SDIO:
+  _include:
+    - fields/sdio/sdio_f4.yaml
+    - collect/sdio/resp.yaml
 
 SPI?:
   _include:
@@ -183,45 +277,45 @@ SYSCFG:
     _delete:
       - MII_RMII_SEL
 
-TIM*:
+TIM1:
   _include:
     - patches/tim/icpsc.yaml
-    - fields/tim/basic.yaml
-
-"TIM[34]":
-  _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
-
-"TIM[25]":
-  _include:
-    - patches/tim/tim2_common_32bit.yaml
-    - fields/tim/tim_32bit.yaml
-
-"TIM[1-58]":
-  _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
     - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim1.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-58-9],TIM??":
+TIM[25]:
   _include:
-    - fields/tim/tim_ckd.yaml
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim2_common_32bit.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim2.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
+TIM3:
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim3.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
+TIM6:
+  _include:
+    - fields/tim/v1/tim6.yaml
 
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
+TIM9:
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim9_ic1f.yaml
+    - fields/tim/v1/tim9.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+TIM1[01]:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/v1/tim10.yaml
+    - collect/tim/ccr.yaml
 
 UART*:
   _include:
@@ -247,41 +341,7 @@ _include:
   - patches/ethernet/mac_regs.yaml
   - patches/ethernet/mmc.yaml
   - patches/ethernet/f2_f4.yaml
-  - fields/can/can.yaml
-  - collect/can/can.yaml
-  - collect/can/filter_bank.yaml
-  - collect/cryp/v2.yaml
-  - patches/ltdc/f4_f7_ltdc_bccr.yaml
-  - fields/ltdc/ltdc.yaml
-  - collect/ltdc/layer.yaml
-  - patches/sai/sai_v1.yaml
-  - fields/sai/sai.yaml
-  - collect/sai/ch.yaml
-  - fields/dac/dac_wavegen.yaml
-  - fields/dac/dac_f4_2ch.yaml
-  - fields/dac/dac_dmaudr.yaml
-  - patches/rcc/rcc_merge_rtcsel.yaml
-  - fields/rcc/rcc_v2.yaml
-  - fields/rcc/rcc_v2_pllcfgr_pllr.yaml
-  - fields/rcc/rcc_v2_i2s.yaml
-  - fields/rcc/rcc_v2_i2s_pll.yaml
-  - fields/rcc/rcc_v2_i2s_pllq.yaml
-  - fields/rcc/rcc_v2_sai_pllp.yaml
-  - fields/rcc/rcc_v2_sai_pllr.yaml
-  - fields/rcc/rcc_v2_bdcr_lsemod.yaml
-  - fields/rcc/rcc_v2_dckcfgr_timpre.yaml
-  - fields/rcc/rcc_v2_dckcfgr_i2s_sai_f4.yaml
-  - fields/rcc/rcc_v2_dckcfgr_saidivr.yaml
-  - fields/rcc/rcc_v2_dckcfgr_48m_sd.yaml
-  - fields/rcc/rcc_v2_dckcfgr_dsisel.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
   - patches/adc/adc_common_group_name.yaml
-  - patches/dma/fcr_wo.yaml
-  - patches/dma/dma_v2.yaml
-  - fields/dma/dma_v2.yaml
-  - collect/dma/st.yaml
-  - fields/dma/dma2d_v1.yaml
   - patches/tim/group.yaml
   - fields/eth/eth_dma_common.yaml
   - fields/eth/eth_dma_mb_edfe_dmarswtr.yaml
@@ -289,23 +349,6 @@ _include:
   - fields/eth/eth_mac_cstf.yaml
   - fields/eth/eth_mmc_common.yaml
   - fields/eth/eth_mmc_mcfhp_mcp.yaml
-  - patches/fsmc/fsmc_sramfix.yaml
-  - patches/fsmc/fsmc_nand.yaml
-  - fields/fsmc/fsmc_sram.yaml
-  - fields/fsmc/fsmc_wfdis.yaml
-  - fields/fsmc/fsmc_nand.yaml
-  - fields/fsmc/fsmc_sd.yaml
-  - collect/fsmc/sram.yaml
-  - collect/fsmc/sd.yaml
-  - fields/flash/flash_v1.yaml
-  - fields/flash/flash_latency16.yaml
-  - collect/hash/v2.yaml
-  - patches/rtc/alarm.yaml
-  - patches/rtc/f4_cr.yaml
-  - patches/rtc/rtc_cr.yaml
-  - fields/rtc/rtc_common.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
   - patches/usb_otg/fs_remove_prefix.yaml
   - patches/usb_otg/fs_host_addr.yaml
   - patches/usb_otg/fs_v2.yaml
@@ -315,10 +358,5 @@ _include:
   - collect/usb_otg/hs.yaml
   - patches/usb_otg/hs_fixes_446_469.yaml
   - patches/dbgmcu/dbgmcu.yaml
-  - fields/sdio/sdio_f4.yaml
-  - collect/sdio/resp.yaml
   - patches/ethernet/f4_f7.yaml
   - fields/eth/eth_ptp_ppsfreq.yaml
-  - collect/dsi/isr.yaml
-  - patches/pwr/f4.yaml
-  - fields/pwr/pwr_f469_f479.yaml

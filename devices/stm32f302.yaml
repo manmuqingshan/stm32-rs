@@ -21,13 +21,17 @@ _modify:
   # Rename DAC to DAC1 in accordance with the reference manual.
   DAC:
     name: DAC1
+  SYSCFG_COMP_OPAMP:
+    name: SYSCFG
+    groupName: SYSCFG
+    description: System configuration controller
 
 ADC1_2:
   _include:
     - patches/adc/f3_multi_dual.yaml
     - fields/adc/adc_v3_common_f3.yaml
 
-ADC?:
+ADC1:
   _include:
     - patches/adc/offset_en.yaml
     - patches/adc/f3.yaml
@@ -37,14 +41,52 @@ ADC?:
   SQR?:
     SQ*: [1, 18]
 
+CAN:
+  _include:
+    - fields/can/can.yaml
+    - collect/can/can.yaml
+    - collect/can/filter_bank.yaml
+
+CRC:
+  _include:
+    - fields/crc/crc_advanced.yaml
+    - fields/crc/crc_idr_8bit.yaml
+    - fields/crc/crc_pol.yaml
+
+DAC1:
+  _include:
+    - fields/dac/dac_common_2ch.yaml
+    - fields/dac/dac_wavegen.yaml
+    - fields/dac/dac_dmaudr.yaml
+
+DMA?:
+  _include:
+    - fields/dma/v1.yaml
+    - collect/dma/v1.yaml
+
 EXTI:
   _include:
     - patches/exti/add_fpu_interrupt.yaml
+    - patches/exti/f3_offset.yaml
+    - fields/exti/common.yaml
+
+FLASH:
+  _include:
+    - patches/flash/f3.yaml
+    - patches/flash/f3_obr_rdptr.yaml
+    - fields/flash/flash_f3_common.yaml
+    - fields/flash/flash_f3_acr_hlfcya.yaml
+    - fields/flash/flash_f3_obr_sram_parity_check.yaml
 
 GPIO?:
   _include:
     - fields/gpio/v2/f3.yaml
     - collect/gpio/v2.yaml
+
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BC]:
+  _include: collect/gpio/v2_derive.yaml
 
 I2C?:
   _include:
@@ -112,6 +154,27 @@ RCC:
   CFGR2:
     _delete:
       - ADC34PRES
+  _include:
+    - patches/rcc/f3.yaml
+    - patches/rcc/f3_mco.yaml
+    - patches/rcc/f3_usb.yaml
+    - patches/rcc/f3_i2c3.yaml
+    - patches/rcc/f3_spi4.yaml
+    - patches/rcc/f3_delete_tim8.yaml
+    - patches/rcc/f3_cfgr3_tim.yaml
+    - fields/rcc/rcc_f3.yaml
+    - fields/rcc/rcc_f3_i2s.yaml
+    - fields/rcc/rcc_pllsrc_2bit.yaml
+    - fields/rcc/rcc_f1_f3_usb.yaml
+
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/rtc_common.yaml
+    - fields/rtc/rtc_f3.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
 
 SPI?:
   _include:
@@ -142,72 +205,71 @@ SYSCFG:
         name: LOCKUP_LOCK
       BYP_ADD_PAR:
         name: BYP_ADDR_PAR
+  _include:
+    - patches/syscfg/f3.yaml
+    - patches/syscfg/f3_cfgr1_mem_mode_3.yaml
+    - patches/syscfg/f3_cfgr1_i2c3_fmp.yaml
+    - patches/syscfg/f3_cfgr1_adc2_dac1_rmp.yaml
+    - fields/syscfg/syscfg_f3.yaml
+    - fields/syscfg/syscfg_f302.yaml
+    - fields/syscfg/syscfg_f3_cfgr2_pvd_lock.yaml
+
+TIM[18]:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v2/tim1.yaml
+    - collect/tim/ccr.yaml
+
+TIM2:
+  _include:
+    - patches/tim/tim_o24ce.yaml
+    - patches/tim/tim2_common_32bit.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v2/tim2.yaml
+    - collect/tim/ccr.yaml
 
 TIM3:
+  _include:
+    - patches/tim/tim_o24ce.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v2/tim3.yaml
+    - collect/tim/ccr.yaml
   CNT:
     _modify:
       CNT_or_UIFCPY:
         name: UIFCPY
 
-"TIM[2-5]":
-  _include: patches/tim/tim_o24ce.yaml
-
-"TIM[1],TIM8":
-  _include: patches/tim/icpsc.yaml
-
-TIM*:
+TIM6:
   _include:
-    - fields/tim/basic.yaml
+    - fields/tim/v2/tim6.yaml
 
-"TIM[34]":
+TIM15:
   _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
+    - fields/tim/v2/tim15.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[25]":
+TIM1[67]:
   _include:
-    - patches/tim/tim2_common_32bit.yaml
-    - fields/tim/tim_32bit.yaml
+    - fields/tim/v2/tim16.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-58]":
+TSC:
   _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
-    - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
-    - fields/tim/tim_ckd.yaml
-
-TIM16:
-  _include: fields/tim/tim16.yaml
-
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
-
-"TIM9,TIM12,TIM15":
-  _include: fields/tim/v2/ccm9_15.yaml
-
-"TIM[12-58],TIM19,TIM20":
-  _include: fields/tim/v2/ccm_extended.yaml
-
-"TIM1[013467]":
-  _include: fields/tim/v2/ccm_common.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+    - collect/tsc/iogcr.yaml
 
 USART*:
   _include:
     - patches/usart/merge_CR2_ADDx_fields.yaml
     - patches/usart/merge_BRR_fields.yaml
     - fields/usart/usart_v2B.yaml
+
+USB:
+  _strip: USB_
+  _include:
+    - patches/usb/merge_add.yaml
+    - fields/usb/usb.yaml
 
 WWDG:
   _include:
@@ -217,57 +279,11 @@ WWDG:
 _include:
   - patches/nvic/4_prio_bits.yaml
   - patches/gpio/f3_reset_values.yaml
-  - patches/rcc/f3.yaml
-  - patches/rcc/f3_mco.yaml
-  - patches/rcc/f3_usb.yaml
-  - patches/rcc/f3_i2c3.yaml
-  - patches/rcc/f3_spi4.yaml
-  - patches/rcc/f3_delete_tim8.yaml
-  - patches/rcc/f3_cfgr3_tim.yaml
-  - patches/syscfg/f3.yaml
-  - patches/syscfg/f3_cfgr1_mem_mode_3.yaml
-  - patches/syscfg/f3_cfgr1_i2c3_fmp.yaml
-  - patches/syscfg/f3_cfgr1_adc2_dac1_rmp.yaml
   - patches/opamp/f3_opamp12.yaml
   - patches/comp/f3_comp1246.yaml
   - patches/comp/f3_comp2_inp_dac.yaml
-  - fields/syscfg/syscfg_f3.yaml
-  - fields/syscfg/syscfg_f302.yaml
-  - fields/syscfg/syscfg_f3_cfgr2_pvd_lock.yaml
-  - fields/can/can.yaml
-  - collect/can/can.yaml
-  - collect/can/filter_bank.yaml
   - patches/usb/rename_USB_FS_peripheral_to_USB.yaml
-  - patches/usb/merge_add.yaml
-  - patches/usb/unprefix_registers.yaml
-  - fields/dac/dac_wavegen.yaml
-  - fields/dac/dac_common_2ch.yaml
-  - fields/dac/dac_dmaudr.yaml
-  - fields/crc/crc_advanced.yaml
-  - fields/crc/crc_idr_8bit.yaml
-  - fields/crc/crc_pol.yaml
   - patches/tim/group.yaml
-  - fields/rcc/rcc_f3.yaml
-  - fields/rcc/rcc_f3_i2s.yaml
-  - fields/rcc/rcc_pllsrc_2bit.yaml
-  - fields/rcc/rcc_f1_f3_usb.yaml
-  - fields/dma/dma_v1.yaml
-  - collect/dma/v1.yaml
-  - patches/exti/f3_offset.yaml
-  - fields/exti/exti.yaml
-  - patches/rtc/alarm.yaml
-  - patches/rtc/rtc_cr.yaml
-  - fields/rtc/rtc_common.yaml
-  - fields/rtc/rtc_f3.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
-  - collect/tsc/iogcr.yaml
-  - fields/usb/usb.yaml
   - patches/dbgmcu/f3.yaml
   - fields/comp/comp_f3.yaml
   - fields/opamp/opamp_f3.yaml
-  - patches/flash/f3.yaml
-  - patches/flash/f3_obr_rdptr.yaml
-  - fields/flash/flash_f3_common.yaml
-  - fields/flash/flash_f3_obr_sram_parity_check.yaml
-  - fields/flash/flash_f3_acr_hlfcya.yaml

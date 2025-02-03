@@ -15,9 +15,6 @@ _copy:
   TIM14:
     from: TIM2
 
-_delete:
-  - HRTIM # RM0468 devices do not have an HRTIM
-
 # Fix invalid groupName
 _modify:
   OctoSPII_O_Manager:
@@ -46,7 +43,7 @@ ADC3:
   _include:
     - fields/adc/adc_h7_revision_v.yaml
 
-ADC[12]:
+ADC1:
   _strip: ADC_
   _include:
     - patches/adc/offset.yaml
@@ -56,8 +53,32 @@ ADC[12]:
   SQR?:
     SQ*: [0, 19]
 
+AXI:
+  _include:
+    - fields/axi/axi_v1.yaml
+
+BDMA:
+  _strip: BDMA_
+  _include:
+    - fields/dma/bdma.yaml
+    - collect/dma/bdma.yaml
+
+CEC:
+  _include:
+    - fields/hdmi_cec.yaml
+
 CORDIC:
   _strip: CORDIC_
+  _include:
+    - fields/cordic/v1.yaml
+
+CRC:
+  _include:
+    - patches/crc/crc_rename_init.yaml
+    - patches/crc/h7_addr_fix.yaml
+    - fields/crc/crc_advanced.yaml
+    - fields/crc/crc_idr_32bit.yaml
+    - fields/crc/crc_pol.yaml
 
 # Merge the hundreds of individual bit fields into single fields for the
 # crypt key/iv registers.
@@ -66,6 +87,18 @@ CRYP:
     _merge: k*
   "IV[01][LR]R":
     _merge: IV*
+
+DMA2D:
+  _include:
+    - patches/dma/dma2d_v2.yaml
+    - fields/dma/dma2d_v2.yaml
+
+DMA?:
+  _include:
+    - patches/dma/fcr_wo.yaml
+    - patches/dma/h7_dmacr.yaml
+    - fields/dma/dma_v3.yaml
+    - collect/dma/st.yaml
 
 DMAMUX1:
   _strip: DMAMUX_
@@ -98,12 +131,33 @@ DBGMCU:
       DBGSLPD1:
         name: DBGSLEEP_D1
 
+DFSDM:
+  _include:
+    - patches/dfsdm/h735_747_753.yaml
+    - collect/dfsdm/v1.yaml
+
 DCMI:
   _modify:
     _interrupts:
       DCMI:
         name: DCMI_PSSI
         description: DCMI/PSSI global interrupt
+
+EXTI:
+  _include:
+    - patches/exti/h7_singlecore.yaml
+    - fields/exti/exti_h7.yaml
+
+FDCAN?:
+  _include:
+    - patches/fdcan/fdcan_h7.yaml
+
+FMAC:
+  _strip: FMAC_
+
+FMC:
+  _include:
+    - collect/fsmc/sdram.yaml
 
 GPIOA:
   _strip: GPIOA_
@@ -113,6 +167,15 @@ GPIO?:
     - patches/gpio/add_r_suffix.yaml
     - fields/gpio/v2/common.yaml
     - collect/gpio/v2.yaml
+
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BCJK]:
+  _include: collect/gpio/v2_derive.yaml
+
+HSEM:
+  _include:
+    - collect/hsem/r.yaml
 
 I2C?:
   _include:
@@ -124,15 +187,27 @@ IWDG1:
     - patches/16bit.yaml
     - fields/iwdg/iwdg_with_WINR.yaml
 
+LPTIM?:
+  _include:
+    - fields/lptim/lptim_v1.yaml
+
 LTDC:
   _add:
     _interrupts:
       LTDC_ERR:
         value: 89
         description: LCD-TFT global Error interrupt
+  _include:
+    - patches/ltdc/ltdc.yaml
+    - fields/ltdc/ltdc.yaml
+    - collect/ltdc/layer.yaml
 
 MDIOS:
   _strip: MDIOS_
+
+MDMA:
+  _include:
+    - collect/dma/mdma.yaml
 
 # OCTOSPI blocks
 OCTOSPI?:
@@ -166,6 +241,9 @@ OTG1_HS_HOST:
 
 OTG1_HS_DEVICE:
   _include: patches/usb_otg/hsdevice.yaml
+
+PSSI:
+  _strip: PSSI_
 
 # PWR block
 PWR:
@@ -220,30 +298,35 @@ RCC:
       resetValue: "0x00010000"
     C1_APB4LPENR:
       resetValue: "0x0421DEAA"
-  AHB3RSTR:
-    _delete:
-      - JPGDECRST
-      - QSPIRST
-  AHB3ENR:
-    _delete:
-      - JPGDECEN
-      - QSPIEN
-  AHB3LPENR,C1_AHB3LPENR:
-    _delete:
-      - JPGDECLPEN
-      - QSPILPEN
-    _add:
-      OCTOSPI1LPEN:
-        description: OCTOSPI1 and OCTOSPI1 delay block enable during CSleep Mode
-        bitWidth: 1
-        bitOffset: 14
-      OCTOSPI2LPEN:
-        description: OCTOSPI2 and OCTOSPI2 delay block enable during CSleep Mode
-        bitWidth: 1
-        bitOffset: 19
+  _include:
+    - patches/rcc/h735.yaml
+    - patches/rcc/h7_hsicfgr_csicfgr_735.yaml
+    - fields/rcc/v3/h7.yaml
+    - fields/rcc/v3/h7_revision_v.yaml
+
+RNG:
+  _include:
+    - patches/rng/h735.yaml
+    - fields/rng/rng_wl.yaml
+    - fields/rng/rng_v1.yaml
+    - fields/rng/rng_v1_ced.yaml
+
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/rtc_common.yaml
+    - fields/rtc/rtc_h7.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
 
 SAI?:
   _strip: SAI_
+  _include:
+    - patches/sai/h7.yaml
+    - patches/sai/h7_mcken.yaml
+    - fields/sai/sai.yaml
+    - collect/sai/ch.yaml
+    - collect/sai/pdm.yaml
 
 SDMMC?:
   _strip: SDMMC_
@@ -358,78 +441,62 @@ TIM1:
     _interrupts:
       TIM_CC:
         name: TIM1_CC
-
-"TIM[1],TIM[2-4],TIM1[2-4]":
-  _include: patches/tim/icpsc.yaml
-
-TIM*:
   _include:
-    - fields/tim/basic.yaml
+    - patches/tim/icpsc.yaml
+    - patches/tim/v2/oc4m_bit3.yaml
+    - patches/tim/v2/oc5m_bit3.yaml
+    - patches/tim/rep_16b.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v2/tim1.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[34]":
+TIM2:
   _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
-    - fields/tim/tim_16bit.yaml
-
-"TIM[25]":
-  _include:
+    - patches/tim/icpsc.yaml
     - patches/tim/tim2_common_32bit.yaml
-    - fields/tim/tim_32bit.yaml
-    - fields/tim/tim_32bit.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v2/tim2.yaml
+    - collect/tim/ccr.yaml
 
-"TIM1[34]":
+TIM[34]:
   _include:
+    - patches/tim/icpsc.yaml
     - patches/tim/tim_ch_16bit_l.yaml
-  _delete:
-    - CCR[234]
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v2/tim3.yaml
+    - collect/tim/ccr.yaml
 
-# Dual channel timers
-"TIM1[2]":
-  _include: patches/tim/tim_ch_16bit_l.yaml
+TIM6:
+  _include:
+    - fields/tim/v2/tim6.yaml
+
+TIM12:
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/v2/tim9.yaml
+    - collect/tim/ccr.yaml
   _delete:
     - CCR[34]
 
-"TIM[18]":
+TIM1[34]:
   _include:
-    - patches/tim/v2/oc5m_bit3.yaml
-    - fields/tim/tim_advanced.yaml
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/v2/tim13.yaml
+    - collect/tim/ccr.yaml
+  _delete:
+    - CCR[234]
 
-"TIM[1-58]":
+TIM15:
   _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
-    - fields/tim/tim_mms_ts_sms.yaml
-    - fields/tim/generic.yaml
-    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v2/tim15.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-58-9],TIM??":
+TIM1[67]:
   _include:
-    - fields/tim/tim_ckd.yaml
-
-TIM16:
-  _include: fields/tim/tim16.yaml
-
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM1[2-7]":
-  _include: fields/tim/tim_h7.yaml
-
-"TIM9,TIM12,TIM15":
-  _include: fields/tim/v2/ccm9_15.yaml
-
-"TIM[12-58],TIM19,TIM20":
-  _include: fields/tim/v2/ccm_extended.yaml
-
-"TIM1[013467]":
-  _include: fields/tim/v2/ccm_common.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+    - fields/tim/v2/tim16.yaml
+    - collect/tim/ccr.yaml
 
 USART*:
   _include:
@@ -447,57 +514,10 @@ WWDG1:
     - fields/wwdg/wwdg_v2.yaml
 
 # -----------------------------------------------------------------------------
-
 _include:
-  - fields/hdmi_cec.yaml
-  - patches/rcc/h7_hsicfgr_csicfgr_735.yaml
   - patches/h7_common_singlecore_735.yaml
-  - patches/fdcan/fdcan_h7.yaml
-  - collect/fsmc/sdram.yaml
   - patches/ethernet/h7_combined_desc.yaml
-  - patches/exti/h7_singlecore.yaml
-  - patches/dma/fcr_wo.yaml
-  - patches/dma/bdma_v2_new.yaml
-  - patches/dma/h7_dmacr.yaml
-  - fields/dma/bdma.yaml
-  - fields/dma/dma_v3.yaml
-  - collect/dma/st.yaml
-  - collect/dma/bdma.yaml
-  - collect/dma/mdma.yaml
-  - patches/dma/dma2d_v2.yaml
-  - fields/dma/dma2d_v2.yaml
-  - collect/hsem/r.yaml
-  - patches/sai/h7.yaml
-  - patches/sai/h7_mcken.yaml
-  - fields/sai/sai.yaml
-  - collect/sai/ch.yaml
-  - collect/sai/pdm.yaml
-  - patches/dfsdm/h735_747_753.yaml
-  - collect/dfsdm/v1.yaml
   - collect/usb_otg/hs.yaml
-  - fields/axi/axi_v1.yaml
-  - patches/crc/crc_rename_init.yaml
-  - fields/crc/crc_advanced.yaml
-  - fields/crc/crc_idr_32bit.yaml
-  - fields/crc/crc_pol.yaml
   - patches/gpio/h7_jk.yaml
-  - fields/lptim/lptim_v1.yaml
-  - patches/ltdc/ltdc.yaml
-  - fields/ltdc/ltdc.yaml
-  - collect/ltdc/layer.yaml
-  - fields/rcc/rcc_h7.yaml
-  - fields/rcc/rcc_h7_revision_v.yaml
-  - patches/rng/h735.yaml
-  - fields/rng/rng_wl.yaml
-  - fields/rng/rng_v1.yaml
-  - fields/rng/rng_v1_ced.yaml
   - patches/tim/group.yaml
-  - fields/exti/exti_h7.yaml
-  - patches/rtc/alarm.yaml
-  - fields/rtc/rtc_common.yaml
-  - fields/rtc/rtc_h7.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
-  - patches/crc/h7_addr_fix.yaml
   - patches/ethernet/h7_mac.yaml
-  - fields/cordic/cordic_h7.yaml

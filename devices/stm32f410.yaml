@@ -27,9 +27,6 @@ ADC_Common:
 ADC1:
   _include:
     - patches/adc/smpx_18.yaml
-
-ADC?:
-  _include:
     - fields/adc/adc_v2.yaml
     - fields/adc/adc_v2/adc_v2_extsel_a.yaml
     - collect/adc/jofr_jdr.yaml
@@ -40,6 +37,9 @@ CRC:
     _modify:
       CR:
         name: RESET
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
 
 DAC:
   CR:
@@ -52,6 +52,16 @@ DAC:
       - TEN2
       - BOFF2
       - EN2
+  _include:
+    - fields/dac/dac_f410.yaml
+    - fields/dac/dac_wavegen.yaml
+    - fields/dac/dac_dmaudr.yaml
+
+DMA?:
+  _include:
+    - patches/dma/dma_v2.yaml
+    - fields/dma/dma_v2.yaml
+    - collect/dma/st.yaml
 
 EXTI:
   _include:
@@ -68,10 +78,15 @@ EXTI:
         value: 76
 
 FLASH:
-  ACR:
-    _modify:
-      LATENCY:
-        bitWidth: 4
+  _include:
+    - patches/flash/latency_4b.yaml
+    - patches/flash/optcr_nwrp.yaml
+    - fields/flash/flash_v1.yaml
+    - fields/flash/flash_latency16.yaml
+    - fields/flash/flash_optcr.yaml
+    - fields/flash/flash_optcr_sprmod.yaml
+    - fields/flash/flash_optcr_wdg.yaml
+    - collect/flash/optcr_nwrp.yaml
 
 FMPI2C?:
   _include:
@@ -81,6 +96,11 @@ GPIO?:
   _include:
     - fields/gpio/v2/common.yaml
     - collect/gpio/v2.yaml
+
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BH]:
+  _include: collect/gpio/v2_derive.yaml
 
 I2C?:
   _include:
@@ -97,24 +117,10 @@ IWDG:
     - fields/iwdg/iwdg.yaml
 
 PWR:
-  CR:
-    _add:
-      FISSR:
-        description: Flash Interface Stop while System Run
-        bitOffset: 21
-        bitWidth: 1
-      FMSSR:
-        description: Flash Memory Sleep System Run
-        bitOffset: 20
-        bitWidth: 1
-      MRLVDS:
-        description: Main regulator Low Voltage in Deep Sleep
-        bitOffset: 11
-        bitWidth: 1
-      LPLVDS:
-        description: Low-power regulator Low Voltage in Deep Sleep
-        bitOffset: 10
-        bitWidth: 1
+  _include:
+    - patches/pwr/f4.yaml
+    - patches/pwr/add_sleep.yaml
+    - fields/pwr/pwr_f410_f412_f413_f423.yaml
 
 # Add missing reset/enable bits for SPI 5 (SPI5EN is present)
 RCC:
@@ -145,6 +151,19 @@ RCC:
       I2C4SEL:
         name: FMPI2C1SEL
         description: FMPI2C1 kernel clock source selection
+  _include:
+    - patches/rcc/f4_fmpi2c.yaml
+    - patches/rcc/f41x_bdcr_lsemod.yaml
+    - patches/rcc/rcc_merge_sw_sws.yaml
+    - patches/rcc/rcc_merge_rtcsel.yaml
+    - fields/rcc/v2/common.yaml
+    - fields/rcc/v2/bdcr_lsemod.yaml
+    - fields/rcc/v2/pllcfgr_pllr.yaml
+    - fields/rcc/v2/cfgr_mcoen.yaml
+    - fields/rcc/v2/dckcfgr_timpre.yaml
+    - fields/rcc/v2/dckcfgr_i2ssrc.yaml
+    - fields/rcc/v2/dckcfgr2_lptimsel.yaml
+    - fields/rcc/v2/dckcfgr2_i2csel.yaml
 
 RNG:
   _include: fields/rng/rng_f4_ced.yaml
@@ -154,6 +173,14 @@ RNG:
         description: Clock error detection
         bitOffset: 5
         bitWidth: 1
+
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - patches/rtc/rtc_cr.yaml
+    - fields/rtc/rtc_common.yaml
+    - collect/rtc/alarm.yaml
+    - collect/rtc/bkpr.yaml
 
 SPI?:
   _include:
@@ -197,47 +224,42 @@ SYSCFG:
       FMPI2C1_SCL:
         name: FMPI2C4_SCL
 
+TIM1:
+  _include:
+    - patches/tim/icpsc.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim1.yaml
+    - collect/tim/ccr.yaml
+
 TIM5:
+  _include:
+    - patches/tim/icpsc.yaml
+    - patches/tim/tim_ch_16bit_l.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim3.yaml
+    - collect/tim/ccr.yaml
   _add:
     _interrupts:
       TIM5:
         description: TIM5 global interrupt
         value: 50
 
-TIM*:
+TIM6:
+  _include:
+    - fields/tim/v1/tim6.yaml
+
+TIM9:
   _include:
     - patches/tim/icpsc.yaml
-    - fields/tim/basic.yaml
+    - patches/tim/tim9_ic1f.yaml
+    - fields/tim/v1/tim9.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[2345]":
+TIM11:
   _include:
-    - patches/tim/tim_ch_16bit_l.yaml
-    - fields/tim/tim_16bit.yaml
-
-"TIM[1-58]":
-  _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
-    - fields/tim/tim_mms_ts_sms.yaml
-
-"TIM[1-58-9],TIM??":
-  _include:
-    - fields/tim/tim_ckd.yaml
-
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
-
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+    - patches/tim/icpsc.yaml
+    - fields/tim/v1/tim10.yaml
+    - collect/tim/ccr.yaml
 
 USART*:
   _include:
@@ -258,35 +280,6 @@ WWDG:
 # NOTE: Core peripherals (NVIC, MPU, FPU, SCB, etc.) were deleted
 
 _include:
-  - fields/dac/dac_wavegen.yaml
-  - fields/dac/dac_f410.yaml
-  - fields/dac/dac_dmaudr.yaml
-  - patches/rcc/f4_fmpi2c.yaml
-  - patches/rcc/f41x_bdcr_lsemod.yaml
-  - patches/rcc/rcc_merge_sw_sws.yaml
-  - patches/rcc/rcc_merge_rtcsel.yaml
-  - fields/rcc/rcc_v2.yaml
-  - fields/rcc/rcc_v2_bdcr_lsemod.yaml
-  - fields/rcc/rcc_v2_pllcfgr_pllr.yaml
-  - fields/rcc/rcc_v2_cfgr_mcoen.yaml
-  - fields/rcc/rcc_v2_dckcfgr_timpre.yaml
-  - fields/rcc/rcc_v2_dckcfgr_i2ssrc.yaml
-  - fields/rcc/rcc_v2_dckcfgr2_lptimsel.yaml
-  - fields/rcc/rcc_v2_dckcfgr2_i2csel.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
   - patches/adc/adc_common_group_name.yaml
-  - patches/dma/dma_v2.yaml
-  - fields/dma/dma_v2.yaml
-  - collect/dma/st.yaml
   - patches/tim/group.yaml
-  - fields/flash/flash_v1.yaml
-  - fields/flash/flash_latency16.yaml
-  - patches/rtc/alarm.yaml
-  - patches/rtc/rtc_cr.yaml
-  - fields/rtc/rtc_common.yaml
-  - collect/rtc/alarm.yaml
-  - collect/rtc/bkpr.yaml
   - patches/dbgmcu/dbgmcu.yaml
-  - patches/pwr/f4.yaml
-  - fields/pwr/pwr_f410_f412_f413_f423.yaml

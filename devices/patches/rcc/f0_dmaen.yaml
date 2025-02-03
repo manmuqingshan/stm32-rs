@@ -1,0 +1,5 @@
+AHBENR:
+  _modify:
+    DMA1EN:
+      name: DMAEN
+      description: DMA clock enable

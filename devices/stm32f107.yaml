@@ -21,26 +21,56 @@ _modify:
   ETHERNET_PTP:
     name: Ethernet_PTP
 
-ADC?:
+ADC1:
   _include:
     - fields/adc/adc_f1_f37x.yaml
+    - fields/adc/adc_f1_common.yaml
+    - fields/adc/adc1_f1.yaml
+    - collect/adc/jofr_jdr.yaml
 
-"ADC[12]":
+ADC2:
   _include:
+    - fields/adc/adc_f1_f37x.yaml
     - fields/adc/adc_f1_common.yaml
     - collect/adc/jofr_jdr.yaml
 
-ADC1:
-  _include:
-    - fields/adc/adc1_f1.yaml
 ADC3:
   _include:
+    - fields/adc/adc_f1_f37x.yaml
     - fields/adc/adc3_f1.yaml
+    - collect/adc/jofr_jdr.yaml
 
 AFIO:
   _include:
     - fields/exti/derive.yaml
     - fields/exti/abcdefg.yaml
+
+BKP:
+  _include:
+    - fields/bkp/bkp.yaml
+    - collect/bkp/dr.yaml
+
+CAN?:
+  _strip: CAN_
+  _include:
+    - fields/can/can.yaml
+    - collect/can/can.yaml
+    - collect/can/filter_bank.yaml
+
+CRC:
+  _include:
+    - fields/crc/crc_basic.yaml
+    - fields/crc/crc_idr_8bit.yaml
+
+DAC:
+  _include:
+    - fields/dac/dac_common_2ch.yaml
+    - fields/dac/dac_wavegen.yaml
+
+DMA?:
+  _include:
+    - fields/dma/v1.yaml
+    - collect/dma/v1.yaml
 
 Ethernet_MAC:
   MACA2LR:
@@ -53,10 +83,15 @@ EXTI:
     - fields/exti/common.yaml
     - collect/exti/farray.yaml
 
-GPIO?:
+FLASH:
+  _include:
+    - fields/flash/flash_f1.yaml
+
+GPIOA:
   _include:
     - fields/gpio/v1/common.yaml
     - collect/gpio/f1.yaml
+    - collect/gpio/f1_derive.yaml
 
 I2C?:
   _include:
@@ -74,50 +109,54 @@ IWDG:
 MPU:
   _strip: MPU_
 
+PWR:
+  _include:
+    - fields/pwr/pwr_v1.yaml
+
+RCC:
+  _include:
+    - patches/rcc/f1_uart45.yaml
+    - fields/rcc/rcc_f107.yaml
+    - fields/rcc/rcc_f1_f3_usb.yaml
+    - fields/rcc/rcc_cfgr2_f107.yaml
+
+RTC:
+  _include:
+    - fields/rtc/rtc_f1.yaml
+
 SPI?:
   _include:
     - patches/16bit.yaml
     - patches/spi/dr8.yaml
     - fields/spi/spi_v1_without_FRF_FRE.yaml
 
-"TIM1[0134]":
-  _include: patches/tim/tim10_14_missing_opm.yaml
-
-"TIM[1],TIM8":
-  _include: patches/tim/icpsc.yaml
-
-TIM*:
+TIM[18]:
   _include:
-    - fields/tim/basic.yaml
-
-"TIM[1-58]":
-  _include:
-    - fields/tim/tim_gp1.yaml
-    - fields/tim/generic.yaml
+    - patches/tim/icpsc.yaml
     - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim1.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-58-9],TIM??":
+TIM2:
   _include:
-    - fields/tim/tim_ckd.yaml
+    - fields/tim/tim_mms_ts_sms.yaml
+    - fields/tim/v1/tim3.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[67]":
-  _include: fields/tim/tim6.yaml
-
-"TIM[2345]":
+TIM6:
   _include:
-    - fields/tim/tim_16bit.yaml
+    - fields/tim/v1/tim6.yaml
 
-"TIM[18]":
-  _include: fields/tim/tim_advanced.yaml
+TIM9:
+  _include:
+    - fields/tim/v1/tim9.yaml
+    - collect/tim/ccr.yaml
 
-"TIM[1-589],TIM??":
-  _include: fields/tim/v1/ccm.yaml
-
-"TIM[1-589],TIM1[0-79],TIM2?":
-  _include: collect/tim/ccr.yaml
-
-"TIM[18],TIM20":
-  _include: collect/tim/ccr_advanced.yaml
+TIM13:
+  _include:
+    - patches/tim/tim10_14_missing_opm.yaml
+    - fields/tim/v1/tim13.yaml
+    - collect/tim/ccr.yaml
 
 UART*:
   _include:
@@ -128,6 +167,10 @@ USART*:
   _include:
     - fields/usart/uart_common.yaml
     - fields/usart/uart_usart.yaml
+
+USB:
+  _include:
+    - fields/usb/usb.yaml
 
 WWDG:
   _include:
@@ -140,32 +183,12 @@ WWDG:
         name: EWIF
 
 _include:
-  - patches/rcc/f1_uart45.yaml
   - patches/bkp/bkp.yaml
-  - fields/bkp/bkp.yaml
-  - collect/bkp/dr.yaml
-  - patches/can/can_remove_prefix.yaml
-  - fields/can/can.yaml
-  - collect/can/can.yaml
-  - collect/can/filter_bank.yaml
-  - fields/dac/dac_wavegen.yaml
-  - fields/dac/dac_common_2ch.yaml
-  - fields/crc/crc_basic.yaml
-  - fields/crc/crc_idr_8bit.yaml
-  - fields/pwr/pwr_v1.yaml
   - patches/tim/group.yaml
-  - fields/rcc/rcc_f107.yaml
-  - fields/rcc/rcc_f1_f3_usb.yaml
-  - fields/rcc/rcc_cfgr2_f107.yaml
-  - fields/rtc/rtc_f1.yaml
-  - fields/dma/dma_v1.yaml
-  - collect/dma/v1.yaml
   - patches/usb_otg/fs_fixes_107.yaml
   - patches/usb_otg/fs_v1.yaml
   - collect/usb_otg/fs.yaml
-  - fields/usb/usb.yaml
   - patches/dbgmcu/rename.yaml
-  - fields/flash/flash_f1.yaml
   - patches/ethernet/f1.yaml
   - fields/eth/eth_dma_common.yaml
   - fields/eth/eth_mac_common.yaml

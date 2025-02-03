@@ -2,10 +2,22 @@ _svd: ../svd/stm32h7r.svd
 
 _clear_fields: "*"
 
-ADC?:
+ADC1:
   _strip: ADC_
   CFGR:
     _merge: EXTSEL*
+
+DMA2D:
+  _include:
+    - collect/dma/dma2d_clut.yaml
+
+GFXMMU:
+  _include:
+    - collect/gfxmmu/lut.yaml
+
+GPDMA:
+  _include:
+    - collect/dma/gpdma/h7rs_u5.yaml
 
 GPIO?:
   _strip: GPIO?_
@@ -14,11 +26,100 @@ GPIO?:
     - fields/gpio/v3/af0-15.yaml
     - collect/gpio/v2r.yaml
 
+GPIO[A]:
+  _include: collect/gpio/gpioa_afr.yaml
+GPIO[BC]:
+  _include: collect/gpio/v2r_derive.yaml
+
+HASH:
+  _include:
+    - collect/hash/v3.yaml
+
+HPDMA:
+  _include:
+    - collect/dma/hpdma.yaml
+
 IWDG:
   _include: patches/16bit_with_mask.yaml
 
+JPEG:
+  _include:
+    - collect/jpeg/ram_h7rs.yaml
+
+RCC:
+  _include:
+    - fields/rcc/v3/h7rs.yaml
+
+RTC:
+  _include:
+    - patches/rtc/alarm.yaml
+    - fields/rtc/v3.yaml
+    - collect/rtc/alarm.yaml
+
+SDMMC?:
+  _strip: SDMMC_
+  _include:
+    - collect/sdmmc/fifo.yaml
+
 SPI?:
   _include: patches/spi/rxtxdr.yaml
+
+TAMP:
+  _include:
+    - collect/tamp/bkp.yaml
+
+TIM1:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/v3/tim1.yaml
+    - collect/tim/ccr.yaml
+
+TIM2:
+  CNT:
+    _modify:
+      UIFCPY_CNT:
+        name: UIFCPY
+      CNT:
+        bitWidth: 32
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/ccmr2_alternate.yaml
+    - patches/tim/v2/ocm_bit3.yaml
+    - fields/tim/v3/tim2.yaml
+    - collect/tim/ccr.yaml
+
+TIM6:
+  _include:
+    - fields/tim/v3/tim6.yaml
+
+TIM9:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/v2/ocm1_bit3.yaml
+    - fields/tim/v3/tim9.yaml
+    - collect/tim/ccr.yaml
+
+TIM13:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - fields/tim/v3/tim13.yaml
+    - collect/tim/ccr.yaml
+
+TIM15:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - patches/tim/v2/ocm1_bit3.yaml
+    - fields/tim/v3/tim15.yaml
+    - collect/tim/ccr.yaml
+
+TIM16:
+  _include:
+    - patches/tim/ccmr1_alternate.yaml
+    - fields/tim/v3/tim16.yaml
+    - fields/tim/v3/occe.yaml
+    - collect/tim/ccr.yaml
 
 UCPD:
   _include:
@@ -30,11 +131,3 @@ WWDG:
 
 _include:
   - patches/h7_common_bootflash.yaml
-  - collect/jpeg/ram_h7rs.yaml
-  - collect/hash/v3.yaml
-  - collect/gfxmmu/lut.yaml
-  - collect/dma/dma2d_clut.yaml
-  - collect/tamp/bkp.yaml
-  - collect/dma/h7rs_gpdma.yaml
-  - collect/sdmmc/fifo.yaml
-  - fields/rcc/rcc_h7rs.yaml
